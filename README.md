@@ -23,7 +23,7 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 - `plugins/client-ui-best-practices/.codex-plugin/plugin.json`: Client UI Best Practices plugin manifest.
 - `plugins/client-ui-best-practices/skills/`: UI-thread boundaries, `hostScope`-confined Host work on a custom dispatcher, explicit Default/IO switching, Compose state collection, observable data, and UI-free business test guidance.
 - `plugins/test-report-sharing/.claude-plugin/plugin.json`: Test Report Sharing plugin manifest.
-- `plugins/test-report-sharing/skills/`: Test result collection, E2E recording capture, selectable Git/Difftastic diff report generation, and ngrok tunnel sharing.
+- `plugins/test-report-sharing/skills/`: Separate test-report sharing and Difftastic-first code-diff sharing workflows, with ngrok tunnel sharing.
 - `plugins/test-report-sharing/scripts/`: Shell scripts for collecting test results, recordings, generating diffs, and starting ngrok.
 - `plugins/qemu-alpine-docker/`: accelerated unattended Alpine/Docker provisioning, single-VM lifecycle, loopback Docker API and Testcontainers port-range forwarding.
 - `plugins/*/agents/`: portable agent prompts at the plugin root, alongside `skills/`.

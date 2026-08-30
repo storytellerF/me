@@ -177,11 +177,19 @@ echo "  Deletions: -$DELETIONS"
 HTML_FILE="$OUTPUT_DIR/diff/index.html"
 
 DIFFTASTIC_DISABLED=""
+GIT_SELECTED=" selected"
+DIFFTASTIC_SELECTED=""
+GIT_VIEW_HIDDEN=""
+DIFFTASTIC_VIEW_HIDDEN=" hidden"
 if [[ "$DIFFTASTIC_AVAILABLE" != "true" ]]; then
     DIFFTASTIC_DISABLED=" disabled"
     DIFFTASTIC_NOTE="Difftastic is unavailable because $DIFFTASTIC_COMMAND_HTML was not found."
 else
     DIFFTASTIC_NOTE="Choose the renderer used for this comparison."
+    GIT_SELECTED=""
+    DIFFTASTIC_SELECTED=" selected"
+    GIT_VIEW_HIDDEN=" hidden"
+    DIFFTASTIC_VIEW_HIDDEN=""
 fi
 
 render_diff_template() {
@@ -197,6 +205,10 @@ render_diff_template() {
         line="${line//@@INSERTIONS@@/$INSERTIONS}"
         line="${line//@@DELETIONS@@/$DELETIONS}"
         line="${line//@@DIFFTASTIC_DISABLED@@/$DIFFTASTIC_DISABLED}"
+        line="${line//@@GIT_SELECTED@@/$GIT_SELECTED}"
+        line="${line//@@DIFFTASTIC_SELECTED@@/$DIFFTASTIC_SELECTED}"
+        line="${line//@@GIT_VIEW_HIDDEN@@/$GIT_VIEW_HIDDEN}"
+        line="${line//@@DIFFTASTIC_VIEW_HIDDEN@@/$DIFFTASTIC_VIEW_HIDDEN}"
         line="${line//@@DIFFTASTIC_NOTE@@/$DIFFTASTIC_NOTE}"
         printf '%s\n' "$line"
     done < "$template"

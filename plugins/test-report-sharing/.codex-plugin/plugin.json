@@ -1,7 +1,7 @@
 {
   "name": "test-report-sharing",
-  "version": "0.2.0-20260824151123",
-  "description": "Collect test results, E2E recordings, and selectable Git or Difftastic code diffs, then share them via a public ngrok tunnel.",
+  "version": "0.3.0-20260830204455",
+  "description": "Collect test reports or Difftastic-first code diffs, then share the resulting static site through ngrok.",
   "author": {
     "name": "Test Report Sharing"
   },
@@ -18,19 +18,19 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Test Report Sharing",
-    "shortDescription": "Share test results and selectable Git or Difftastic diffs via ngrok.",
-    "longDescription": "Collects test results from standard project locations, captures E2E recordings, and renders selectable Git or changed-fragment Difftastic JSON views with inline and side-by-side layouts before exposing the static report via ngrok.",
+    "shortDescription": "Share test reports or Difftastic-first code diffs via ngrok.",
+    "longDescription": "Collects test results from standard project locations, captures E2E recordings, and shares Difftastic-first structural diff views with Git fallback plus inline and side-by-side layouts through ngrok.",
     "developerName": "Test Report Sharing",
     "category": "Developer Tools",
     "capabilities": [
       "Test Reporting",
       "E2E Recording",
-      "Diff Generation",
+      "Difftastic-first Diff Sharing",
       "Ngrok Tunnel"
     ],
     "defaultPrompt": [
       "Collect test results and share them via ngrok.",
-      "Generate a Git and Difftastic diff report and expose it publicly."
+      "Generate a Difftastic-first code diff and expose it publicly."
     ],
     "brandColor": "#2563EB"
   }

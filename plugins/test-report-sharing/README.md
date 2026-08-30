@@ -1,66 +1,51 @@
 # Test Report Sharing Plugin
 
-Collect reports and code diffs, then share them via a public ngrok tunnel.
+Collect test reports or share code diffs through a static site exposed with ngrok. The plugin provides two focused skills:
 
-## Features
+- `test-report-sharing` collects unit-test and E2E reports, including recordings.
+- `diff-sharing` generates and shares a code diff, preferring Difftastic whenever `difft` is available.
 
-- **Report Collection**: Automatically discovers and collects test reports (JUnit XML, HTML, E2E) from standard project locations
-- **Diff Report Generation**: Creates HTML reports that switch between ordinary Git diff and locally rendered Difftastic JSON, with inline and side-by-side layouts
-- **Static Site Generation**: Assembles all artifacts into a beautiful, responsive HTML report site
-- **Ngrok Integration**: Exposes the report site via a public ngrok tunnel for easy sharing
+## Workflows
 
-## Quick Start
+### Share test reports
 
-### Using the Agent (Recommended)
-
-The `test-report-operator` agent coordinates the entire workflow automatically:
+The `test-report-operator` collects reports, builds the site, and exposes it through ngrok.
 
 ```bash
-# The agent will:
-# 1. Inspect your project structure
-# 2. Collect reports from build/reports/
-# 3. Generate diff report
-# 4. Create static site
-# 5. Start ngrok tunnel
-# 6. Return public URL and summary
-```
-
-### Manual Script Execution
-
-```bash
-# 1. Collect reports
 plugins/test-report-sharing/scripts/collect-test-results.sh
-
-# 2. Generate diff report
-plugins/test-report-sharing/scripts/generate-diff-report.sh
-
-# 3. Generate static site
 plugins/test-report-sharing/scripts/generate-report-site.sh
-
-# 4. Start ngrok tunnel
 plugins/test-report-sharing/scripts/start-ngrok.sh
 ```
 
+### Share a code diff
+
+The `diff-sharing-operator` compares the working branch with `main` (or `GIT_BASE_REF`), generates the diff site, and exposes it through ngrok.
+
+```bash
+plugins/test-report-sharing/scripts/generate-diff-report.sh
+plugins/test-report-sharing/scripts/generate-report-site.sh
+plugins/test-report-sharing/scripts/start-ngrok.sh
+```
+
+When `difft` is on `PATH`, the generated diff page opens with Difftastic selected. Git diff remains available as an alternate renderer. If Difftastic is unavailable, the page defaults to Git diff and marks Difftastic unavailable.
+
 ## Configuration
 
-### Environment Variables
-
 | Variable | Description | Default |
-|----------|-------------|---------|
-| `REPORT_OUTPUT_DIR` | Output directory for reports | `~/.cache/test-reports/<project-hash>` |
-| `REPORT_DIRS` | Colon-separated list of report directories | Auto-detect (`build/reports/`) |
-| `NGROK_AUTHTOKEN` | ngrok authentication token | (required for public tunnel) |
+|---|---|---|
+| `REPORT_OUTPUT_DIR` | Output directory for reports and diffs | `~/.cache/test-reports/<project-hash>` |
+| `REPORT_DIRS` | Colon-separated report directories | Auto-detect (`build/reports/`) |
+| `NGROK_AUTHTOKEN` | ngrok authentication token | Required for a public tunnel |
 | `NGROK_PORT` | Local port to expose | `8080` |
-| `GIT_BASE_REF` | Base git ref for diff comparison | `main` |
-| `GIT_COMPARE_REF` | Compare git ref | `HEAD` |
+| `GIT_BASE_REF` | Base Git ref for a diff | `main` |
+| `GIT_COMPARE_REF` | Compare Git ref | `HEAD` |
+| `GIT_INCLUDE_UNCOMMITTED` | Include uncommitted changes | `true` |
 | `DIFFTASTIC_COMMAND` | Difftastic executable name or path | `difft` |
 | `DIFFTASTIC_WIDTH` | Captured Difftastic output width | `160` |
-| `DIFFTASTIC_SKIP_UNCHANGED` | Omit files where Difftastic detects no change | `true` |
-| `DIFFTASTIC_PARSE_ERROR_LIMIT` | Parse errors allowed before falling back to line-oriented diff | `100` |
+| `DIFFTASTIC_SKIP_UNCHANGED` | Omit unchanged files | `true` |
+| `DIFFTASTIC_PARSE_ERROR_LIMIT` | Parse errors before text fallback | `100` |
 
-### Command Line Options
-
-Each script supports `--help` for detailed usage:
+Each script accepts `--help`:
 
 ```bash
 plugins/test-report-sharing/scripts/collect-test-results.sh --help
@@ -69,143 +54,45 @@ plugins/test-report-sharing/scripts/generate-report-site.sh --help
 plugins/test-report-sharing/scripts/start-ngrok.sh --help
 ```
 
-## Supported Input Formats
+## Structure
 
-### Reports
-- JUnit XML reports (`*-tests.xml`, `TEST-*.xml`)
-- HTML test reports (`*.html` in test output directories)
-- E2E test reports with embedded video playback
-- Gradle/Maven test output directories (`build/reports/`)
-
-### Diff Reports
-- Git diff output converted to HTML with syntax highlighting
-- Difftastic structural diff output selectable on the same page when `difft` is installed
-- Difftastic layout selector switches between inline and side-by-side output without leaving the report
-- Difftastic JSON rendered locally with old/new source lines to reproduce the official context view: aligned line numbers, unchanged context, and foreground-only emphasis on changed structural fragments
-- Renderer-specific summaries: Git shows line insertions/deletions, while Difftastic shows its structural model and the currently selected display mode
-- Supports comparison against any git ref (branch, commit, tag)
-
-## Project Structure
-
-```
+```text
 plugins/test-report-sharing/
-├── .claude-plugin/
-│   └── plugin.json              # Claude Code plugin manifest
 ├── agents/
-│   └── test-report-operator.md  # Agent for coordinating workflow
+│   ├── diff-sharing-operator.md
+│   └── test-report-operator.md
 ├── skills/
+│   ├── diff-sharing/
+│   │   └── SKILL.md
 │   └── test-report-sharing/
-│       └── SKILL.md             # Skill instructions
+│       └── SKILL.md
 ├── scripts/
-│   ├── collect-test-results.sh  # Collect reports
-│   ├── generate-diff-report.sh  # Generate diff report
-│   ├── generate-report-site.sh  # Generate static site
-│   └── start-ngrok.sh           # Start ngrok tunnel
+│   ├── collect-test-results.sh
+│   ├── generate-diff-report.sh
+│   ├── generate-report-site.sh
+│   └── start-ngrok.sh
 ├── templates/
-│   ├── diff-report.html         # Diff page template
-│   ├── diff-report.css          # Diff page stylesheet
-│   ├── report-site.html         # Report index template
-│   └── style.css                # Report index stylesheet
-├── tests/
-│   └── test-generate-diff-report.sh # Diff renderer smoke tests
-└── README.md                    # This file
+│   ├── diff-report.css
+│   ├── diff-report.html
+│   ├── report-site.html
+│   └── style.css
+└── tests/
+    └── test-generate-diff-report.sh
 ```
 
 ## Requirements
 
-- **Bash**: Scripts require bash 4.0+
-- **jq**: Optional; used for JSON statistics when available, with a built-in fallback
-- **git**: For diff report generation
-- **Difftastic (`difft`)**: Optional, for structural diff rendering
-- **Python 3**: For local HTTP server (optional)
-- **ngrok**: For public tunnel (optional, can use local server)
-
-### Installing ngrok
-
-```bash
-# macOS
-brew install ngrok
-
-# Linux
-snap install ngrok
-
-# Windows
-choco install ngrok
-
-# Or download from: https://ngrok.com/download
-```
-
-### Setting up ngrok
-
-1. Sign up at https://ngrok.com
-2. Get your authtoken from https://dashboard.ngrok.com/get-started/your-authtoken
-3. Set the environment variable:
-   ```bash
-   export NGROK_AUTHTOKEN="your_token_here"
-   ```
-
-## Examples
-
-### Basic Usage
-
-```bash
-# Run the full workflow
-cd /path/to/your/project
-plugins/test-report-sharing/scripts/generate-report-site.sh
-plugins/test-report-sharing/scripts/start-ngrok.sh
-```
-
-### Custom Configuration
-
-```bash
-# Custom report directories
-export REPORT_DIRS="./build/reports:./app/build/reports"
-
-# Custom base ref for diff
-export GIT_BASE_REF="develop"
-
-# Run with custom config
-plugins/test-report-sharing/scripts/collect-test-results.sh
-plugins/test-report-sharing/scripts/generate-diff-report.sh
-plugins/test-report-sharing/scripts/generate-report-site.sh
-```
-
-### Viewing Reports Locally
-
-```bash
-# Generate report
-plugins/test-report-sharing/scripts/generate-report-site.sh
-
-# View in browser
-open ~/.cache/test-reports/<project-hash>/index.html
-
-# Or start local server
-cd ~/.cache/test-reports/<project-hash>
-python3 -m http.server 8080
-# Open http://localhost:8080
-```
+- **Bash 4.0+** for the scripts.
+- **Git** for code-diff sharing.
+- **Difftastic (`difft`)** for the preferred structural renderer; Git diff is used when it is unavailable.
+- **ngrok** for a public tunnel; otherwise the scripts provide a local server URL.
+- **Python 3** for the local HTTP-server fallback.
 
 ## Troubleshooting
 
-### No reports found
-- Check that your test framework outputs to standard locations (`build/reports/`)
-- Set `REPORT_DIRS` to point to your report directories
-- Run your tests first to generate reports
-
-### ngrok not working
-- Verify ngrok is installed: `ngrok version`
-- Check authtoken: `ngrok config check`
-- Ensure port is not in use: `lsof -i :8080`
-- Try a different port: `NGROK_PORT=9090 ./start-ngrok.sh`
-
-### Diff generation failed
-- Ensure you're in a git repository
-- Check that the base ref exists: `git rev-parse main`
-- Verify you have changes to compare
-
-### Difftastic is unavailable
-- Install Difftastic and make sure `difft` is on `PATH`, or set `DIFFTASTIC_COMMAND` to its executable path
-- The generated page disables the Difftastic choice when it is unavailable; ordinary Git diff remains usable
+- **No test reports:** run the tests first or set `REPORT_DIRS` to the directories containing their output.
+- **Difftastic is unavailable:** install `difft` or set `DIFFTASTIC_COMMAND` to its executable path. The Git renderer remains usable.
+- **ngrok is unavailable:** verify `ngrok version`, configure `NGROK_AUTHTOKEN`, or use the returned local server URL.
 
 ## License
 

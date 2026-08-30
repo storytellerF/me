@@ -43,8 +43,8 @@
             <div class="view-controls">
                 <label for="diff-renderer">Diff renderer:</label>
                 <select id="diff-renderer">
-                    <option value="git">Git diff</option>
-                    <option value="difftastic"@@DIFFTASTIC_DISABLED@@>Difftastic</option>
+                    <option value="git"@@GIT_SELECTED@@>Git diff</option>
+                    <option value="difftastic"@@DIFFTASTIC_DISABLED@@@@DIFFTASTIC_SELECTED@@>Difftastic</option>
                 </select>
                 <span id="difftastic-layout-control" hidden>
                     <label for="difftastic-layout">Layout:</label>
@@ -55,10 +55,10 @@
                 </span>
                 <span class="view-note">@@DIFFTASTIC_NOTE@@</span>
             </div>
-            <div class="diff-container diff-view" id="git-view">
+            <div class="diff-container diff-view" id="git-view"@@GIT_VIEW_HIDDEN@@>
                 <div class="no-diff">Loading Git diff...</div>
             </div>
-            <div class="diff-container diff-view" id="difftastic-view" hidden>
+            <div class="diff-container diff-view" id="difftastic-view"@@DIFFTASTIC_VIEW_HIDDEN@@>
                 <div class="no-diff">Loading Difftastic diff...</div>
             </div>
             <a href="../index.html" class="back-link">← Back to Report</a>
@@ -83,15 +83,17 @@
             displayValue.textContent = showSideBySide ? 'Side by Side' : 'Inline';
         }
 
-        renderer.addEventListener('change', () => {
+        function updateRenderer() {
             const showDifftastic = renderer.value === 'difftastic';
             gitView.hidden = showDifftastic;
             difftasticView.hidden = !showDifftastic;
             gitStats.hidden = showDifftastic;
             difftasticStats.hidden = !showDifftastic;
             layoutControl.hidden = !showDifftastic;
-        });
+        }
+        renderer.addEventListener('change', updateRenderer);
         layout.addEventListener('change', updateDifftasticLayout);
+        updateRenderer();
         updateDifftasticLayout();
 
         function decodePayload(payload) {

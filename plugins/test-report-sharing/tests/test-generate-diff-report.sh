@@ -59,6 +59,7 @@ MISSING_OUTPUT="$WORK_DIR/missing-output"
 
 assert_contains "$MISSING_OUTPUT/diff/index.html" '<select id="diff-renderer">' "renderer selector"
 assert_contains "$MISSING_OUTPUT/diff/index.html" '<option value="difftastic" disabled>' "missing Difftastic disabled"
+assert_contains "$MISSING_OUTPUT/diff/index.html" '<option value="git" selected>' "Git default when Difftastic is unavailable"
 assert_contains "$MISSING_OUTPUT/diff/index.html" '&lt;tag&gt; &amp; value' "Git diff HTML escaping"
 assert_contains "$MISSING_OUTPUT/diff/stats.json" '"difftastic_available": false' "missing Difftastic stats"
 
@@ -80,7 +81,9 @@ AVAILABLE_OUTPUT="$WORK_DIR/available-output"
         "$PLUGIN_DIR/scripts/generate-diff-report.sh" --output-dir "$AVAILABLE_OUTPUT" --base-ref HEAD
 )
 
-assert_contains "$AVAILABLE_OUTPUT/diff/index.html" '<option value="difftastic">' "available Difftastic selectable"
+assert_contains "$AVAILABLE_OUTPUT/diff/index.html" '<option value="difftastic" selected>' "Difftastic default when available"
+assert_contains "$AVAILABLE_OUTPUT/diff/index.html" '<div class="diff-container diff-view" id="git-view" hidden>' "Git view hidden by Difftastic default"
+assert_contains "$AVAILABLE_OUTPUT/diff/index.html" '<div class="diff-container diff-view" id="difftastic-view">' "Difftastic view shown by default"
 assert_contains "$AVAILABLE_OUTPUT/diff/index.html" 'id="difftastic-json"' "Difftastic JSON payload embedded"
 assert_contains "$AVAILABLE_OUTPUT/diff/index.html" '<link rel="stylesheet" href="diff-report.css">' "diff template stylesheet"
 assert_contains "$AVAILABLE_OUTPUT/diff/diff-report.css" '.structural-change-add' "diff stylesheet copied"
@@ -100,7 +103,7 @@ assert_contains "$AVAILABLE_OUTPUT/diff/index.html" 'rhsLines: decodeBase64(rhsP
 assert_contains "$AVAILABLE_OUTPUT/diff/index.html" 'text.slice(change.start, change.end)' "safe changed-fragment rendering"
 assert_contains "$AVAILABLE_OUTPUT/diff/index.html" 'visibleAlignedLines(record, maps)' "context line reconstruction"
 assert_contains "$AVAILABLE_OUTPUT/diff/diff-report.css" 'structural-change-add' "fragment-only addition styling"
-assert_contains "$AVAILABLE_OUTPUT/diff/index.html" "renderer.addEventListener('change'" "renderer switching script"
+assert_contains "$AVAILABLE_OUTPUT/diff/index.html" "renderer.addEventListener('change', updateRenderer)" "renderer switching script"
 assert_contains "$AVAILABLE_OUTPUT/diff/stats.json" '"difftastic_available": true' "available Difftastic stats"
 assert_contains "$AVAILABLE_OUTPUT/diff/stats.json" '"difftastic_skip_unchanged": true' "skip unchanged stats"
 assert_contains "$AVAILABLE_OUTPUT/diff/stats.json" '"difftastic_parse_error_limit": 100' "parse error limit stats"
