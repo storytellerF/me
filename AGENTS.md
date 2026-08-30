@@ -4,7 +4,9 @@ This repository is the source of truth for the `me` Codex plugin collection and 
 
 - Keep reusable agent prompts at the plugin root in `plugins/*/agents/*.md`, alongside the plugin's `skills/` directory.
 - Keep prompts specific to this repository under `agents/`; do not place one-off application behavior in the global collection.
-- Keep Claude agent instructions in Markdown with only Claude-compatible frontmatter (`model` and `effort`).
+- Keep Claude agent instructions in Markdown with only Claude-compatible frontmatter: `name`, `description`, `model`, and `effort`.
+- Preserve `context: fork` and `agent: <agent-name>` in a skill's frontmatter when they route the skill to a Claude agent. Do not delete those routing fields to satisfy a Codex-only validator.
+- `skill-creator/scripts/quick_validate.py` does not recognize the Claude routing fields and exits with an expected schema error for routed skills. Record that incompatibility when it occurs, then validate the packaged skill with `plugin-creator/scripts/validate_plugin.py`; a passing plugin validation is the authoritative structural check for these routed skills.
 - When a skill or agent changes, proactively update the owning `SKILL.md`, `README.md`, and applicable `CLAUDE.md` references. The custom agent prompts themselves belong at plugin root.
 - Do not claim that installing a plugin automatically installs agents.
 - Use `MAJOR.MINOR.PATCH-YYYYMMDDHHMMSS` for every plugin version. Keep each plugin's `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json` versions identical, and do not insert environment or tool labels into the version.
