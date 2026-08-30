@@ -54,6 +54,29 @@ plugins/test-report-sharing/scripts/generate-report-site.sh --help
 plugins/test-report-sharing/scripts/start-ngrok.sh --help
 ```
 
+## Build a Codex-Compatible Package
+
+The source skills retain Claude routing metadata (`context` and `agent`). To create a Codex-only package whose skills pass Codex's minimal frontmatter validator, build a local package before installing or testing it:
+
+```bash
+plugins/test-report-sharing/scripts/build-codex-package.sh
+```
+
+This writes an untracked plugin root to `plugins/test-report-sharing/build/codex/`. Its manifest is `build/codex/.codex-plugin/plugin.json` and it declares `./skills/` relative to that generated package root. The build copies runtime scripts and templates, but removes only the Claude routing fields from its copied `SKILL.md` files. It never changes the source skills or agent prompts.
+
+Pass `--output-dir DIR` to build elsewhere. The destination is replaced on each run.
+
+Validate the generated package with the Codex skill validator for each generated skill, and with the plugin validator for the package root:
+
+```bash
+python /path/to/skill-creator/scripts/quick_validate.py \
+  plugins/test-report-sharing/build/codex/skills/diff-sharing
+python /path/to/skill-creator/scripts/quick_validate.py \
+  plugins/test-report-sharing/build/codex/skills/test-report-sharing
+python /path/to/plugin-creator/scripts/validate_plugin.py \
+  plugins/test-report-sharing/build/codex
+```
+
 ## Structure
 
 ```text
@@ -67,6 +90,7 @@ plugins/test-report-sharing/
 │   └── test-report-sharing/
 │       └── SKILL.md
 ├── scripts/
+│   ├── build-codex-package.sh
 │   ├── collect-test-results.sh
 │   ├── generate-diff-report.sh
 │   ├── generate-report-site.sh
@@ -77,6 +101,7 @@ plugins/test-report-sharing/
 │   ├── report-site.html
 │   └── style.css
 └── tests/
+    ├── test-build-codex-package.sh
     └── test-generate-diff-report.sh
 ```
 

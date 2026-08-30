@@ -1,6 +1,6 @@
 {
   "name": "test-report-sharing",
-  "version": "0.3.0-20260830204455",
+  "version": "0.3.1-20260830211808",
   "description": "Collect test reports or Difftastic-first code diffs, then share the resulting static site through ngrok.",
   "author": {
     "name": "Test Report Sharing"

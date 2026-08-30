@@ -1,6 +1,9 @@
 # Generated test reports
 test-reports/
 
+# Locally generated Codex-compatible plugin packages
+plugins/*/build/
+
 # Node modules
 node_modules/
 
