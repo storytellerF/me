@@ -1,6 +1,8 @@
 ---
 name: test-report-sharing
 description: Collect test and E2E reports, including recordings, then share the static report site through ngrok.
+context: fork
+agent: test-report-operator
 ---
 
 # Test Report Sharing

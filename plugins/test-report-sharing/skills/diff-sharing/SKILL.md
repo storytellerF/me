@@ -1,6 +1,8 @@
 ---
 name: diff-sharing
 description: Render and share code diffs through a static site and ngrok, using Difftastic by default when it is available.
+context: fork
+agent: diff-sharing-operator
 ---
 
 # Diff Sharing

@@ -1,4 +1,6 @@
 ---
+name: test-report-operator
+description: Collect test reports and E2E recordings, then generate a static report site and expose it via ngrok.
 model: sonnet
 effort: medium
 ---

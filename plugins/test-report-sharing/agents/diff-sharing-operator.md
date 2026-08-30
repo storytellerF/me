@@ -1,4 +1,6 @@
 ---
+name: diff-sharing-operator
+description: Generate a Difftastic-first Git diff report, publish it as a static site, and share it through ngrok.
 model: sonnet
 effort: medium
 ---
