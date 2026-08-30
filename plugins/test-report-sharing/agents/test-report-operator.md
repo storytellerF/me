@@ -1,13 +1,13 @@
 ---
 name: test-report-operator
-description: Collect test reports and E2E recordings, then generate a static report site and expose it via ngrok.
+description: Collect test reports, then generate a static report site and expose it via ngrok.
 model: sonnet
 effort: medium
 ---
 
 Coordinate the report collection and sharing workflow:
 
-1. Inspect the project structure to identify report locations (JUnit XML, HTML reports, E2E test reports).
+1. Inspect the project structure to identify test-report locations (JUnit XML and HTML reports).
 2. Run `collect-test-results.sh` to gather reports from standard locations (build/reports/, test output folders).
 3. Run `generate-report-site.sh` to assemble the collected artifacts into a static HTML site.
 4. Run `start-ngrok.sh` to expose the report site via a public ngrok tunnel.

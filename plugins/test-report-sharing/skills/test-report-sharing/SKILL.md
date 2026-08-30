@@ -1,18 +1,17 @@
 ---
 name: test-report-sharing
-description: Collect test and E2E reports, including recordings, then share the static report site through ngrok.
+description: Collect test reports, then share the static report site through ngrok.
 context: fork
 agent: test-report-operator
 ---
 
 # Test Report Sharing
 
-Use this skill when you need to collect unit-test or E2E reports and generate a shareable report site exposed via ngrok.
+Use this skill when you need to collect test reports and generate a shareable report site exposed via ngrok.
 
 ## Required Behavior
 
 - Collect reports from standard project locations (build/reports, test output folders).
-- E2E test reports should include video recordings of the test runs.
 - Assemble the collected artifacts into a static HTML report site.
 - Expose the report site via ngrok if available, otherwise provide a local server URL.
 - Return a summary with the public URL and report count.
@@ -51,7 +50,6 @@ Or run the full workflow via the agent:
 ### Reports
 - JUnit XML reports (`*-tests.xml`, `TEST-*.xml`)
 - HTML test reports (`*.html` in test output directories)
-- E2E test reports with embedded video playback
 - Gradle/Maven test output directories (`build/reports/`)
 
 ## Bundled Resources

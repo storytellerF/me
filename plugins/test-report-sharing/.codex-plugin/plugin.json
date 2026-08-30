@@ -1,28 +1,25 @@
 {
   "name": "test-report-sharing",
-  "version": "0.4.0-20260830213405",
-  "description": "Collect test reports and E2E recordings, then share the resulting static site through ngrok.",
+  "version": "0.4.1-20260830213633",
+  "description": "Collect test reports, then share the resulting static site through ngrok.",
   "author": {
     "name": "Test Report Sharing"
   },
   "license": "MIT",
   "keywords": [
     "test-results",
-    "e2e",
-    "recordings",
     "ngrok",
     "report-sharing"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Test Report Sharing",
-    "shortDescription": "Share test reports and E2E recordings through ngrok.",
-    "longDescription": "Collects test results from standard project locations, captures E2E recordings, and exposes the static report site through ngrok.",
+    "shortDescription": "Share test reports through ngrok.",
+    "longDescription": "Collects test results from standard project locations and exposes the static report site through ngrok.",
     "developerName": "Test Report Sharing",
     "category": "Developer Tools",
     "capabilities": [
       "Test Reporting",
-      "E2E Recording",
       "Ngrok Tunnel"
     ],
     "defaultPrompt": [

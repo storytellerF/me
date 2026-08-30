@@ -1,6 +1,6 @@
 # Test Report Sharing Plugin
 
-Collect unit-test and E2E reports, including recordings, then share a static report site through ngrok.
+Collect test reports, then share a static report site through ngrok.
 
 ## Workflow
 

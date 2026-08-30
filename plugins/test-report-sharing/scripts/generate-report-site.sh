@@ -75,7 +75,7 @@ EOF
                 local display_name
                 display_name=$(echo "$report_name" | sed 's/-/ /g')
                 # Uppercase common abbreviations
-                display_name=$(echo "$display_name" | sed 's/\bE2e\b/E2E/gi; s/\bApi\b/API/gi; s/\bCss\b/CSS/gi; s/\bHtml\b/HTML/gi; s/\bJs\b/JS/gi; s/\bXml\b/XML/gi')
+                display_name=$(echo "$display_name" | sed 's/\bApi\b/API/gi; s/\bCss\b/CSS/gi; s/\bHtml\b/HTML/gi; s/\bJs\b/JS/gi; s/\bXml\b/XML/gi')
                 # Capitalize first letter of each word
                 display_name=$(echo "$display_name" | sed 's/\b\(.\)/\u\1/g')
                 echo "                <a href=\"reports/$report_name/index.html\" class=\"btn\">$display_name</a>"
