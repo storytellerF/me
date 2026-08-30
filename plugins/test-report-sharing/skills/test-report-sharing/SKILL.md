@@ -7,7 +7,7 @@ agent: test-report-operator
 
 # Test Report Sharing
 
-Use this skill when you need to collect unit-test or E2E reports and generate a shareable report site exposed via ngrok. For a code-diff share, use `diff-sharing` instead.
+Use this skill when you need to collect unit-test or E2E reports and generate a shareable report site exposed via ngrok.
 
 ## Required Behavior
 

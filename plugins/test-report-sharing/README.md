@@ -1,15 +1,8 @@
 # Test Report Sharing Plugin
 
-Collect test reports or share code diffs through a static site exposed with ngrok. The plugin provides two focused skills:
+Collect unit-test and E2E reports, including recordings, then share a static report site through ngrok.
 
-- `test-report-sharing` collects unit-test and E2E reports, including recordings.
-- `diff-sharing` generates and shares a code diff, preferring Difftastic whenever `difft` is available.
-
-## Workflows
-
-### Share test reports
-
-The `test-report-operator` collects reports, builds the site, and exposes it through ngrok.
+## Workflow
 
 ```bash
 plugins/test-report-sharing/scripts/collect-test-results.sh
@@ -17,107 +10,51 @@ plugins/test-report-sharing/scripts/generate-report-site.sh
 plugins/test-report-sharing/scripts/start-ngrok.sh
 ```
 
-### Share a code diff
-
-The `diff-sharing-operator` compares the working branch with `main` (or `GIT_BASE_REF`), generates the diff site, and exposes it through ngrok.
-
-```bash
-plugins/test-report-sharing/scripts/generate-diff-report.sh
-plugins/test-report-sharing/scripts/generate-report-site.sh
-plugins/test-report-sharing/scripts/start-ngrok.sh
-```
-
-When `difft` is on `PATH`, the generated diff page opens with Difftastic selected. Git diff remains available as an alternate renderer. If Difftastic is unavailable, the page defaults to Git diff and marks Difftastic unavailable.
+`test-report-operator` coordinates the same workflow when Claude agent routing is available.
 
 ## Configuration
 
 | Variable | Description | Default |
 |---|---|---|
-| `REPORT_OUTPUT_DIR` | Output directory for reports and diffs | `~/.cache/test-reports/<project-hash>` |
+| `REPORT_OUTPUT_DIR` | Output directory for collected reports | `~/.cache/test-reports/<project-hash>` |
 | `REPORT_DIRS` | Colon-separated report directories | Auto-detect (`build/reports/`) |
 | `NGROK_AUTHTOKEN` | ngrok authentication token | Required for a public tunnel |
 | `NGROK_PORT` | Local port to expose | `8080` |
-| `GIT_BASE_REF` | Base Git ref for a diff | `main` |
-| `GIT_COMPARE_REF` | Compare Git ref | `HEAD` |
-| `GIT_INCLUDE_UNCOMMITTED` | Include uncommitted changes | `true` |
-| `DIFFTASTIC_COMMAND` | Difftastic executable name or path | `difft` |
-| `DIFFTASTIC_WIDTH` | Captured Difftastic output width | `160` |
-| `DIFFTASTIC_SKIP_UNCHANGED` | Omit unchanged files | `true` |
-| `DIFFTASTIC_PARSE_ERROR_LIMIT` | Parse errors before text fallback | `100` |
-
-Each script accepts `--help`:
-
-```bash
-plugins/test-report-sharing/scripts/collect-test-results.sh --help
-plugins/test-report-sharing/scripts/generate-diff-report.sh --help
-plugins/test-report-sharing/scripts/generate-report-site.sh --help
-plugins/test-report-sharing/scripts/start-ngrok.sh --help
-```
 
 ## Build a Codex-Compatible Package
 
-The source skills retain Claude routing metadata (`context` and `agent`). To create a Codex-only package whose skills pass Codex's minimal frontmatter validator, build a local package before installing or testing it:
+Source skills retain Claude routing metadata. Build an untracked Codex package before validating or loading it in Codex:
 
 ```bash
 plugins/test-report-sharing/scripts/build-codex-package.sh
 ```
 
-This writes an untracked plugin root to `plugins/test-report-sharing/build/codex/`. Its manifest is `build/codex/.codex-plugin/plugin.json` and it declares `./skills/` relative to that generated package root. The build copies runtime scripts and templates, but removes only the Claude routing fields from its copied `SKILL.md` files. It never changes the source skills or agent prompts.
-
-Pass `--output-dir DIR` to build elsewhere. The destination is replaced on each run.
-
-Validate the generated package with the Codex skill validator for each generated skill, and with the plugin validator for the package root:
-
-```bash
-python /path/to/skill-creator/scripts/quick_validate.py \
-  plugins/test-report-sharing/build/codex/skills/diff-sharing
-python /path/to/skill-creator/scripts/quick_validate.py \
-  plugins/test-report-sharing/build/codex/skills/test-report-sharing
-python /path/to/plugin-creator/scripts/validate_plugin.py \
-  plugins/test-report-sharing/build/codex
-```
+The generated plugin root is `plugins/test-report-sharing/build/codex/`, with its manifest at `build/codex/.codex-plugin/plugin.json`. It contains a copy of the runtime files and removes only `context` and `agent` from copied `SKILL.md` frontmatter.
 
 ## Structure
 
 ```text
 plugins/test-report-sharing/
-├── agents/
-│   ├── diff-sharing-operator.md
-│   └── test-report-operator.md
-├── skills/
-│   ├── diff-sharing/
-│   │   └── SKILL.md
-│   └── test-report-sharing/
-│       └── SKILL.md
+├── agents/test-report-operator.md
+├── skills/test-report-sharing/SKILL.md
 ├── scripts/
 │   ├── build-codex-package.sh
 │   ├── collect-test-results.sh
-│   ├── generate-diff-report.sh
 │   ├── generate-report-site.sh
 │   └── start-ngrok.sh
 ├── templates/
-│   ├── diff-report.css
-│   ├── diff-report.html
 │   ├── report-site.html
 │   └── style.css
 └── tests/
     ├── test-build-codex-package.sh
-    └── test-generate-diff-report.sh
+    └── test-generate-report-site.sh
 ```
 
 ## Requirements
 
 - **Bash 4.0+** for the scripts.
-- **Git** for code-diff sharing.
-- **Difftastic (`difft`)** for the preferred structural renderer; Git diff is used when it is unavailable.
-- **ngrok** for a public tunnel; otherwise the scripts provide a local server URL.
+- **ngrok** for public sharing; otherwise use the local server URL.
 - **Python 3** for the local HTTP-server fallback.
-
-## Troubleshooting
-
-- **No test reports:** run the tests first or set `REPORT_DIRS` to the directories containing their output.
-- **Difftastic is unavailable:** install `difft` or set `DIFFTASTIC_COMMAND` to its executable path. The Git renderer remains usable.
-- **ngrok is unavailable:** verify `ngrok version`, configure `NGROK_AUTHTOKEN`, or use the returned local server URL.
 
 ## License
 

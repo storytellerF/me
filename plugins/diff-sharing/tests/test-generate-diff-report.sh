@@ -36,9 +36,9 @@ assert_not_contains() {
 }
 
 assert_not_contains "$PLUGIN_DIR/scripts/generate-diff-report.sh" '<!DOCTYPE html>' "diff HTML lives in template"
-assert_not_contains "$PLUGIN_DIR/scripts/generate-report-site.sh" '<!DOCTYPE html>' "report site HTML lives in template"
+assert_not_contains "$PLUGIN_DIR/scripts/generate-diff-site.sh" '<!DOCTYPE html>' "diff site HTML lives in template"
 assert_contains "$PLUGIN_DIR/templates/diff-report.html" '@@FILES_CHANGED@@' "diff template placeholders"
-assert_contains "$PLUGIN_DIR/templates/report-site.html" '<!-- @@REPORTS_SECTION@@ -->' "report template section placeholder"
+assert_contains "$PLUGIN_DIR/templates/diff-site.html" '<!-- @@DIFF_SECTION@@ -->' "diff site template section placeholder"
 
 REPO_DIR="$WORK_DIR/repo"
 mkdir -p "$REPO_DIR"
@@ -110,9 +110,9 @@ assert_contains "$AVAILABLE_OUTPUT/diff/stats.json" '"difftastic_parse_error_lim
 
 (
     cd "$REPO_DIR"
-    "$PLUGIN_DIR/scripts/generate-report-site.sh" --output-dir "$AVAILABLE_OUTPUT"
+    "$PLUGIN_DIR/scripts/generate-diff-site.sh" --output-dir "$AVAILABLE_OUTPUT"
 )
-assert_contains "$AVAILABLE_OUTPUT/index.html" '1 file(s) changed. Git line stats:' "report site stats without jq"
-assert_contains "$AVAILABLE_OUTPUT/index.html" '<link rel="stylesheet" href="style.css">' "report site template stylesheet"
+assert_contains "$AVAILABLE_OUTPUT/index.html" '1 file(s) changed. Git line stats:' "diff site stats without jq"
+assert_contains "$AVAILABLE_OUTPUT/index.html" '<link rel="stylesheet" href="style.css">' "diff site template stylesheet"
 
 printf '=== Results: %d passed, 0 failed ===\n' "$pass_count"

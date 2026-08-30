@@ -23,8 +23,9 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 - `plugins/client-ui-best-practices/.codex-plugin/plugin.json`: Client UI Best Practices plugin manifest.
 - `plugins/client-ui-best-practices/skills/`: UI-thread boundaries, `hostScope`-confined Host work on a custom dispatcher, explicit Default/IO switching, Compose state collection, observable data, and UI-free business test guidance.
 - `plugins/test-report-sharing/.claude-plugin/plugin.json`: Test Report Sharing plugin manifest.
-- `plugins/test-report-sharing/skills/`: Separate test-report sharing and Difftastic-first code-diff sharing workflows, with ngrok tunnel sharing.
-- `plugins/test-report-sharing/scripts/`: Shell scripts for collecting test results, recordings, generating diffs, starting ngrok, and building an untracked Codex-compatible package when Claude routing metadata must be excluded.
+- `plugins/test-report-sharing/skills/`: Test-report collection, E2E recording capture, and ngrok tunnel sharing.
+- `plugins/test-report-sharing/scripts/`: Shell scripts for collecting test results, recordings, starting ngrok, and building an untracked Codex-compatible package when Claude routing metadata must be excluded.
+- `plugins/diff-sharing/`: Difftastic-first Git diff generation, static diff-site assembly, ngrok sharing, and an independent Codex-compatible package build.
 - `plugins/qemu-alpine-docker/`: accelerated unattended Alpine/Docker provisioning, single-VM lifecycle, loopback Docker API and Testcontainers port-range forwarding.
 - `plugins/*/agents/`: portable agent prompts at the plugin root, alongside `skills/`.
 - `agents/`: prompts specific to maintaining this plugin collection.
@@ -49,6 +50,7 @@ codex plugin add general-coding-practices@me
 codex plugin add kotlin-coding-practices@me
 codex plugin add client-ui-best-practices@me
 codex plugin add test-report-sharing@me
+codex plugin add diff-sharing@me
 codex plugin add qemu-alpine-docker@me
 ```
 
@@ -72,6 +74,7 @@ Install plugins from the marketplace:
 /plugin install kotlin-coding-practices@me
 /plugin install client-ui-best-practices@me
 /plugin install test-report-sharing@me
+/plugin install diff-sharing@me
 /plugin install qemu-alpine-docker@me
 ```
 

@@ -21,14 +21,14 @@ Use this skill to compare the current Git branch with a base ref and share the r
 ## Quick Start
 
 ```bash
-plugins/test-report-sharing/scripts/generate-diff-report.sh
-plugins/test-report-sharing/scripts/generate-report-site.sh
-plugins/test-report-sharing/scripts/start-ngrok.sh
+plugins/diff-sharing/scripts/generate-diff-report.sh
+plugins/diff-sharing/scripts/generate-diff-site.sh
+plugins/diff-sharing/scripts/start-ngrok.sh
 ```
 
 ## Configuration
 
-- `REPORT_OUTPUT_DIR`: Directory for generated artifacts (default: `~/.cache/test-reports/<project-hash>`)
+- `REPORT_OUTPUT_DIR`: Directory for generated artifacts (default: `~/.cache/diff-reports/<project-hash>`)
 - `NGROK_AUTHTOKEN`: ngrok authentication token (required for public tunnel)
 - `NGROK_PORT`: Local port to expose (default: `8080`)
 - `GIT_BASE_REF`: Base ref for diff comparison (default: `main`)
@@ -42,7 +42,7 @@ plugins/test-report-sharing/scripts/start-ngrok.sh
 ## Bundled Resources
 
 - `scripts/generate-diff-report.sh`: Generates the Git and Difftastic HTML report.
-- `scripts/generate-report-site.sh`: Assembles the static site containing the diff.
+- `scripts/generate-diff-site.sh`: Assembles the static site containing the diff.
 - `scripts/start-ngrok.sh`: Exposes the generated site through ngrok or a local server.
 - `templates/diff-report.html` and `templates/diff-report.css`: Diff page template and stylesheet.
 

@@ -14,7 +14,7 @@ get_cache_dir() {
     local project_dir="${1:-$PWD}"
     local project_hash
     project_hash=$(echo -n "$project_dir" | md5sum | cut -d' ' -f1)
-    echo "${HOME}/.cache/test-reports/${project_hash}"
+    echo "${HOME}/.cache/diff-reports/${project_hash}"
 }
 
 # Default configuration

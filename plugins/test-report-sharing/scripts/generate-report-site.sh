@@ -107,55 +107,9 @@ EOF
     fi
 }
 
-# Generate diff section
-read_diff_stat() {
-    local stats_file="$1"
-    local field="$2"
-    if command -v jq >/dev/null 2>&1; then
-        jq -r ".$field" "$stats_file"
-    else
-        sed -n "s/.*\"$field\"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p" "$stats_file" | head -n 1
-    fi
-}
-
-generate_diff_section() {
-    local diff_dir="$OUTPUT_DIR/diff"
-    if [[ -d "$diff_dir" ]] && [[ -f "$diff_dir/index.html" ]]; then
-        local stats_file="$diff_dir/stats.json"
-        if [[ -f "$stats_file" ]]; then
-            local files_changed insertions deletions
-            files_changed=$(read_diff_stat "$stats_file" "files_changed")
-            insertions=$(read_diff_stat "$stats_file" "insertions")
-            deletions=$(read_diff_stat "$stats_file" "deletions")
-            cat <<EOF
-        <div class="section">
-            <h2>📝 Code Diff</h2>
-            <p>$files_changed file(s) changed. Git line stats: <span class="insertions">+$insertions</span> / <span class="deletions">-$deletions</span></p>
-            <a href="diff/index.html" class="btn">View Full Diff</a>
-        </div>
-EOF
-        else
-            cat <<EOF
-        <div class="section">
-            <h2>📝 Code Diff</h2>
-            <a href="diff/index.html" class="btn">View Diff Report</a>
-        </div>
-EOF
-        fi
-    else
-        cat <<EOF
-        <div class="section">
-            <h2>📝 Code Diff</h2>
-            <p class="no-data">No diff report generated</p>
-        </div>
-EOF
-    fi
-}
-
 # Generate main index.html
 REPORT_GENERATED_AT=$(date +"%Y-%m-%d %H:%M:%S")
 REPORTS_SECTION=$(generate_reports_section)
-DIFF_SECTION=$(generate_diff_section)
 REPORT_TEMPLATE="$PLUGIN_DIR/templates/report-site.html"
 
 if [[ ! -f "$REPORT_TEMPLATE" ]]; then
@@ -167,9 +121,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     case "$line" in
         *'<!-- @@REPORTS_SECTION@@ -->'*)
             printf '%s\n' "$REPORTS_SECTION"
-            ;;
-        *'<!-- @@DIFF_SECTION@@ -->'*)
-            printf '%s\n' "$DIFF_SECTION"
             ;;
         *)
             line="${line//@@GENERATED_AT@@/$REPORT_GENERATED_AT}"
