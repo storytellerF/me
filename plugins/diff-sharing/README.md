@@ -32,7 +32,7 @@ When `difft` is on `PATH`, the generated page opens with Difftastic selected. Ot
 Source skills retain Claude routing metadata. Build an untracked Codex package before validating or loading it in Codex:
 
 ```bash
-plugins/diff-sharing/scripts/build-codex-package.sh
+scripts/build-codex-plugin-package.sh plugins/diff-sharing
 ```
 
 The generated plugin root is `plugins/diff-sharing/build/codex/`, with its manifest at `build/codex/.codex-plugin/plugin.json`. It removes only `context` and `agent` from copied skill frontmatter.
@@ -44,7 +44,6 @@ plugins/diff-sharing/
 ├── agents/diff-sharing-operator.md
 ├── skills/diff-sharing/SKILL.md
 ├── scripts/
-│   ├── build-codex-package.sh
 │   ├── generate-diff-report.sh
 │   ├── generate-diff-site.sh
 │   └── start-ngrok.sh

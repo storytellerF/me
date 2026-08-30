@@ -1,28 +1,43 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Builds a Codex-compatible plugin package without modifying the Claude-oriented
-# source skills. The generated package is intentionally ignored by Git.
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
-OUTPUT_DIR="$PLUGIN_DIR/build/codex"
+# Builds a Codex-compatible copy of a plugin without modifying the
+# Claude-oriented source skills. Generated packages are intentionally ignored.
 
 usage() {
-    cat <<EOF
-Usage: $0 [--output-dir DIR]
+    cat <<'EOF'
+Usage: build-codex-plugin-package.sh PLUGIN_DIR [--output-dir DIR]
 
-Build a Codex-compatible copy of this plugin.
-
-The output package contains its own .codex-plugin/plugin.json and ./skills/
-directory. Claude routing fields (context and agent) are removed only from the
-generated SKILL.md files; source files remain unchanged.
+Build a Codex-compatible copy of PLUGIN_DIR. The output package has its own
+.codex-plugin/plugin.json and ./skills/ directory. Claude routing fields
+(context and agent) are removed only from generated SKILL.md copies.
 
 Options:
-  --output-dir DIR  Destination plugin root (default: $PLUGIN_DIR/build/codex)
+  --output-dir DIR  Destination plugin root (default: PLUGIN_DIR/build/codex)
   --help, -h        Show this help message
 EOF
 }
+
+if [[ $# -eq 0 ]]; then
+    usage >&2
+    exit 1
+fi
+
+PLUGIN_INPUT="$1"
+shift
+
+if [[ "$PLUGIN_INPUT" == "--help" || "$PLUGIN_INPUT" == "-h" ]]; then
+    usage
+    exit 0
+fi
+
+if [[ ! -d "$PLUGIN_INPUT" ]]; then
+    echo "Error: plugin directory does not exist: $PLUGIN_INPUT" >&2
+    exit 1
+fi
+
+PLUGIN_DIR="$(cd "$PLUGIN_INPUT" && pwd)"
+OUTPUT_DIR="$PLUGIN_DIR/build/codex"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -43,6 +58,11 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+if [[ ! -f "$PLUGIN_DIR/.codex-plugin/plugin.json" || ! -d "$PLUGIN_DIR/skills" ]]; then
+    echo "Error: $PLUGIN_DIR is not a plugin source with .codex-plugin/plugin.json and skills/" >&2
+    exit 1
+fi
+
 if [[ "$OUTPUT_DIR" != /* ]]; then
     OUTPUT_DIR="$PWD/$OUTPUT_DIR"
 fi
@@ -56,8 +76,12 @@ rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR/.codex-plugin" "$OUTPUT_DIR/skills"
 
 cp "$PLUGIN_DIR/.codex-plugin/plugin.json" "$OUTPUT_DIR/.codex-plugin/plugin.json"
-cp -R "$PLUGIN_DIR/scripts" "$OUTPUT_DIR/"
-cp -R "$PLUGIN_DIR/templates" "$OUTPUT_DIR/"
+
+for resource_dir in scripts templates; do
+    if [[ -d "$PLUGIN_DIR/$resource_dir" ]]; then
+        cp -R "$PLUGIN_DIR/$resource_dir" "$OUTPUT_DIR/"
+    fi
+done
 
 for source_skill in "$PLUGIN_DIR"/skills/*; do
     [[ -d "$source_skill" ]] || continue

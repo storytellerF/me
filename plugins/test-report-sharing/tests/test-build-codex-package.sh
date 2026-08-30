@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+REPOSITORY_DIR="$(dirname "$(dirname "$PLUGIN_DIR")")"
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
@@ -46,7 +47,7 @@ assert_not_contains() {
 }
 
 OUTPUT_DIR="$WORK_DIR/codex-package"
-"$PLUGIN_DIR/scripts/build-codex-package.sh" --output-dir "$OUTPUT_DIR"
+"$REPOSITORY_DIR/scripts/build-codex-plugin-package.sh" "$PLUGIN_DIR" --output-dir "$OUTPUT_DIR"
 
 assert_exists "$OUTPUT_DIR/.codex-plugin/plugin.json" "generated plugin manifest"
 assert_exists "$OUTPUT_DIR/skills/test-report-sharing/SKILL.md" "generated test-report skill"

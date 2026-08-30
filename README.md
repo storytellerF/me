@@ -5,6 +5,7 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 ## Package Structure
 
 - `.agents/plugins/marketplace.json`: the in-repo `me` Codex marketplace entry.
+- `scripts/build-codex-plugin-package.sh`: Builds an untracked Codex-compatible package for a selected plugin while preserving Claude routing metadata in source skills.
 - `plugins/android-profile/.codex-plugin/plugin.json`: Android Profile plugin manifest.
 - `plugins/*/.claude-plugin/plugin.json`: Claude Code plugin manifests for compatible plugins.
 - `plugins/android-profile/scripts/`: Android SDK, AVD, and emulator scripts.
