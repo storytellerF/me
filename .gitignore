@@ -1,8 +1,8 @@
 # Generated test reports
 test-reports/
 
-# Locally generated Codex-compatible plugin packages
-plugins/*/build/
+# Generated Codex-compatible plugins and marketplace
+/build/
 
 # Node modules
 node_modules/

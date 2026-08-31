@@ -22,7 +22,7 @@ before dependent work or its final response.
 
 ## Local Marketplace Entry
 
-This repository includes `.agents/plugins/marketplace.json` with the local plugin entry:
+Run `scripts/build-codex-plugin-package.sh --all` to generate `build/.agents/plugins/marketplace.json`, which contains the local plugin entry:
 
 ```json
 {

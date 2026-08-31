@@ -11,11 +11,11 @@ inside the owning plugin's root `agents/` directory, alongside `skills/`. Keep p
 and README together. Preserve Claude-compatible Markdown frontmatter (`name`, `description`, `model`, `effort`).
 
 When a skill uses `context: fork` and `agent: <agent-name>` to route into a Claude prompt, preserve both fields in the
-source skill. For Codex validation or loading, run `scripts/build-codex-plugin-package.sh <plugin-directory>` to build
-the plugin's generated `build/codex/` package, which removes only
-those routing fields from copied `SKILL.md` files. Run `skill-creator/scripts/quick_validate.py` against the generated
-skills and `plugin-creator/scripts/validate_plugin.py` against the generated package; do not run the Codex skill
-validator against the Claude-oriented source skills.
+source skill. For Codex validation or loading, run `scripts/build-codex-plugin-package.sh --all` to generate all
+packages under `build/plugins/` and the marketplace at `build/.agents/plugins/marketplace.json`. The generated skills
+remove only those routing fields from copied `SKILL.md` files. Run `skill-creator/scripts/quick_validate.py` against
+the generated skills and `plugin-creator/scripts/validate_plugin.py` against the generated packages; do not run the
+Codex skill validator against the Claude-oriented source skills.
 
 Check for stale names, duplicate rules, broken relative paths, and out-of-date cachebusters. Validate skills and plugin manifests after changes. Do not copy private
 conversation content into prompts; retain only generalized workflows and safe placeholders.

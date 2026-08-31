@@ -4,8 +4,9 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 
 ## Package Structure
 
-- `.agents/plugins/marketplace.json`: the in-repo `me` Codex marketplace entry.
-- `scripts/build-codex-plugin-package.sh`: Builds an untracked Codex-compatible package for a selected plugin while preserving Claude routing metadata in source skills.
+- `scripts/templates/marketplace.json.template`: Source template for the generated Codex marketplace.
+- `scripts/build-codex-plugin-package.sh`: Builds all untracked Codex-compatible plugin packages and their marketplace while preserving Claude routing metadata in source skills.
+- `build/`: Generated, untracked Codex plugin packages and marketplace; create it with the build script before Codex installation.
 - `plugins/android-profile/.codex-plugin/plugin.json`: Android Profile plugin manifest.
 - `plugins/*/.claude-plugin/plugin.json`: Claude Code plugin manifests for compatible plugins.
 - `plugins/android-profile/scripts/`: Android SDK, AVD, and emulator scripts.
@@ -35,13 +36,14 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 
 ### Codex
 
-Add this GitHub repository as a Codex plugin marketplace:
+Clone the repository locally, then generate all Codex-compatible packages and the local marketplace:
 
 ```bash
-codex plugin marketplace add https://github.com/storytellerF/me
+scripts/build-codex-plugin-package.sh --all
+codex plugin marketplace add ./build
 ```
 
-Install plugins from the marketplace:
+Install plugins from the generated marketplace:
 
 ```bash
 codex plugin add android-profile@me

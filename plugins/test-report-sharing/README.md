@@ -26,10 +26,10 @@ plugins/test-report-sharing/scripts/start-ngrok.sh
 Source skills retain Claude routing metadata. Build an untracked Codex package before validating or loading it in Codex:
 
 ```bash
-scripts/build-codex-plugin-package.sh plugins/test-report-sharing
+scripts/build-codex-plugin-package.sh --all
 ```
 
-The generated plugin root is `plugins/test-report-sharing/build/codex/`, with its manifest at `build/codex/.codex-plugin/plugin.json`. It contains a copy of the runtime files and removes only `context` and `agent` from copied `SKILL.md` frontmatter.
+The generated plugin root is `build/plugins/test-report-sharing/`, with its manifest at `build/plugins/test-report-sharing/.codex-plugin/plugin.json`. The same build creates the Codex marketplace at `build/.agents/plugins/marketplace.json`. It contains a copy of the runtime files and removes only `context` and `agent` from copied `SKILL.md` frontmatter.
 
 ## Structure
 
