@@ -30,7 +30,6 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 - `plugins/diff-sharing/`: Difftastic-first Git diff generation, static diff-site assembly, ngrok sharing, and an independent Codex-compatible package build.
 - `plugins/qemu-alpine-docker/`: accelerated unattended Alpine/Docker provisioning, single-VM lifecycle, loopback Docker API and Testcontainers port-range forwarding.
 - `plugins/*/agents/`: portable agent prompts at the plugin root, alongside `skills/`.
-- `agents/`: prompts specific to maintaining this plugin collection.
 
 ## Installation
 
@@ -85,8 +84,7 @@ Run `/reload-plugins` after installation to load the installed plugins in the cu
 
 ### Agent prompts
 
-Claude Code loads the Markdown agents from each plugin's root `agents/` directory. The repository
-also maintains `agents/me-agent-config-maintainer.md` for prompts specific to this collection.
+Claude Code loads the Markdown agents from each plugin's root `agents/` directory.
 
 ## Running Scripts Directly
 
