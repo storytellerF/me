@@ -2,34 +2,16 @@
 
 A local Codex developer plugin collection. It includes Android tooling, client UI and coding guidance, test report sharing with ngrok tunnel support, plus a persistent pure-TCG QEMU Alpine Docker test environment for Windows.
 
-## Package Structure
+## What is included
 
-- `scripts/templates/marketplace.json.template`: Source template for the generated Codex marketplace.
-- `scripts/build-codex-plugin-package.sh`: Builds all untracked Codex-compatible plugin packages and their marketplace while preserving Claude routing metadata in source skills.
-- `build/`: Generated, untracked Codex plugin packages and marketplace; create it with the build script before Codex installation.
-- `plugins/android-profile/.codex-plugin/plugin.json`: Android Profile plugin manifest.
-- `plugins/*/.claude-plugin/plugin.json`: Claude Code plugin manifests for compatible plugins.
-- `plugins/android-profile/scripts/`: Android SDK, AVD, and emulator scripts.
-- `plugins/android-profile/tests/`: smoke test scripts.
-- `plugins/android-profile/profiles/android.profile`: default Android emulator profile.
-- `plugins/android-profile/skills/android-profile/SKILL.md`: Codex-facing Android Profile instructions.
-- `plugins/android-appium-device-lock/.codex-plugin/plugin.json`: Appium device lock plugin manifest.
-- `plugins/android-appium-device-lock/scripts/adb-device-lock.sh`: adb-based device-side file lock script.
-- `plugins/android-appium-device-lock/skills/android-appium-device-lock/SKILL.md`: Codex-facing Appium device lock instructions, including parent waiting for delegated device-verification reports.
-- `plugins/recyclerview-best-practice/.codex-plugin/plugin.json`: RecyclerView best-practice plugin manifest.
-- `plugins/recyclerview-best-practice/skills/`: RecyclerView adapter, diffing, paging, sentinel ViewHolder, and related practice instructions.
-- `plugins/general-coding-practices/.codex-plugin/plugin.json`: General Coding Practices plugin manifest.
-- `plugins/general-coding-practices/skills/`: project collaboration, README maintenance, flow stabilization before end-to-end test authoring, checks and tests, rule-file maintenance, logging, root-cause-first debugging, and repository synchronization instructions.
-- `plugins/kotlin-coding-practices/.codex-plugin/plugin.json`: Kotlin Coding Practices plugin manifest.
-- `plugins/kotlin-coding-practices/skills/`: coroutine-first, immutable-by-default Kotlin and Android Kotlin practice instructions.
-- `plugins/client-ui-best-practices/.codex-plugin/plugin.json`: Client UI Best Practices plugin manifest.
-- `plugins/client-ui-best-practices/skills/`: UI-thread boundaries, `hostScope`-confined Host work on a custom dispatcher, explicit Default/IO switching, Compose state collection, observable data, and UI-free business test guidance.
-- `plugins/test-report-sharing/.claude-plugin/plugin.json`: Test Report Sharing plugin manifest.
-- `plugins/test-report-sharing/skills/`: Test-report collection and ngrok tunnel sharing.
-- `plugins/test-report-sharing/scripts/`: Shell scripts for collecting test results, starting ngrok, and building an untracked Codex-compatible package when Claude routing metadata must be excluded.
-- `plugins/diff-sharing/`: Difftastic-first Git diff generation, static diff-site assembly, ngrok sharing, and an independent Codex-compatible package build.
-- `plugins/qemu-alpine-docker/`: accelerated unattended Alpine/Docker provisioning, single-VM lifecycle, loopback Docker API and Testcontainers port-range forwarding.
-- `plugins/*/agents/`: portable agent prompts at the plugin root, alongside `skills/`.
+- Android emulator provisioning, profiles, and Appium device locking.
+- Android, Kotlin, RecyclerView, client-UI, and general engineering guidance.
+- Test-report and code-diff site generation with optional ngrok sharing.
+- A persistent QEMU Alpine/Docker environment for Windows-hosted test runs.
+- Portable Claude agent prompts bundled with their owning plugins.
+
+Codex packages and the local marketplace are generated on demand by
+`scripts/build-codex-plugin-package.sh`; the resulting `build/` directory is intentionally untracked.
 
 ## Installation
 
