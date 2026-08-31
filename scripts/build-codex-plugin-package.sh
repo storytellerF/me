@@ -12,7 +12,6 @@ MARKETPLACE_TEMPLATE="$SCRIPT_DIR/templates/marketplace.json.template"
 usage() {
     cat <<'EOF'
 Usage:
-  build-codex-plugin-package.sh PLUGIN_DIR [--output-dir PACKAGE_DIR]
   build-codex-plugin-package.sh --all
 
 Build Codex-compatible plugin packages. Generated packages have their own
@@ -22,8 +21,6 @@ Build Codex-compatible plugin packages. Generated packages have their own
 Options:
   --all               Build every plugin under plugins/ and generate the
                       Codex marketplace at build/.agents/plugins/marketplace.json.
-  --output-dir DIR    Destination package root for a single-plugin build.
-                      Default: build/plugins/<plugin-name>.
   --help, -h          Show this help message.
 EOF
 }
@@ -114,44 +111,6 @@ if [[ "$1" == "--all" ]]; then
     exit 0
 fi
 
-PLUGIN_INPUT="$1"
-shift
-
-if [[ ! -d "$PLUGIN_INPUT" ]]; then
-    echo "Error: plugin directory does not exist: $PLUGIN_INPUT" >&2
-    exit 1
-fi
-
-PLUGIN_DIR="$(cd "$PLUGIN_INPUT" && pwd)"
-PLUGIN_NAME="$(basename "$PLUGIN_DIR")"
-OUTPUT_DIR="$BUILD_DIR/plugins/$PLUGIN_NAME"
-
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --output-dir)
-            [[ $# -ge 2 ]] || { echo "Error: --output-dir requires a directory" >&2; exit 1; }
-            OUTPUT_DIR="$2"
-            shift 2
-            ;;
-        --help|-h)
-            usage
-            exit 0
-            ;;
-        *)
-            echo "Error: unknown option: $1" >&2
-            usage >&2
-            exit 1
-            ;;
-    esac
-done
-
-if [[ "$OUTPUT_DIR" != /* ]]; then
-    OUTPUT_DIR="$PWD/$OUTPUT_DIR"
-fi
-
-if [[ "$OUTPUT_DIR" == "/" || "$OUTPUT_DIR" == "$PLUGIN_DIR" ]]; then
-    echo "Error: output directory must be a dedicated package directory" >&2
-    exit 1
-fi
-
-build_plugin "$PLUGIN_DIR" "$OUTPUT_DIR"
+echo "Error: only --all is supported; Codex packages are generated together under build/." >&2
+usage >&2
+exit 1
