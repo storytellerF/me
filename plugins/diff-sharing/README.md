@@ -27,36 +27,6 @@ When `difft` is on `PATH`, the generated page opens with Difftastic selected. Ot
 | `DIFFTASTIC_SKIP_UNCHANGED` | Omit unchanged files | `true` |
 | `DIFFTASTIC_PARSE_ERROR_LIMIT` | Parse errors before text fallback | `100` |
 
-## Build a Codex-Compatible Package
-
-Source skills retain Claude routing metadata. Build an untracked Codex package before validating or loading it in Codex:
-
-```bash
-scripts/build-codex-plugin-package.sh --all
-```
-
-The generated plugin root is `build/plugins/diff-sharing/`, with its manifest at `build/plugins/diff-sharing/.codex-plugin/plugin.json`. The same build creates the Codex marketplace at `build/.agents/plugins/marketplace.json`. It removes only `context` and `agent` from copied skill frontmatter.
-
-## Structure
-
-```text
-plugins/diff-sharing/
-├── agents/diff-sharing-operator.md
-├── skills/diff-sharing/SKILL.md
-├── scripts/
-│   ├── generate-diff-report.sh
-│   ├── generate-diff-site.sh
-│   └── start-ngrok.sh
-├── templates/
-│   ├── diff-report.css
-│   ├── diff-report.html
-│   ├── diff-site.html
-│   └── style.css
-└── tests/
-    ├── test-build-codex-package.sh
-    └── test-generate-diff-report.sh
-```
-
 ## Requirements
 
 - **Bash 4.0+** for the scripts.

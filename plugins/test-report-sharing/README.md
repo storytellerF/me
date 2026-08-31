@@ -21,34 +21,6 @@ plugins/test-report-sharing/scripts/start-ngrok.sh
 | `NGROK_AUTHTOKEN` | ngrok authentication token | Required for a public tunnel |
 | `NGROK_PORT` | Local port to expose | `8080` |
 
-## Build a Codex-Compatible Package
-
-Source skills retain Claude routing metadata. Build an untracked Codex package before validating or loading it in Codex:
-
-```bash
-scripts/build-codex-plugin-package.sh --all
-```
-
-The generated plugin root is `build/plugins/test-report-sharing/`, with its manifest at `build/plugins/test-report-sharing/.codex-plugin/plugin.json`. The same build creates the Codex marketplace at `build/.agents/plugins/marketplace.json`. It contains a copy of the runtime files and removes only `context` and `agent` from copied `SKILL.md` frontmatter.
-
-## Structure
-
-```text
-plugins/test-report-sharing/
-├── agents/test-report-operator.md
-├── skills/test-report-sharing/SKILL.md
-├── scripts/
-│   ├── collect-test-results.sh
-│   ├── generate-report-site.sh
-│   └── start-ngrok.sh
-├── templates/
-│   ├── report-site.html
-│   └── style.css
-└── tests/
-    ├── test-build-codex-package.sh
-    └── test-generate-report-site.sh
-```
-
 ## Requirements
 
 - **Bash 4.0+** for the scripts.
