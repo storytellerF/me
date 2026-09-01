@@ -50,3 +50,11 @@ if grep -R -Eq '^(context|agent):[[:space:]]*' "$BUILD_DIR/plugins"; then
 fi
 
 echo "PASS: generated skills omit Claude routing fields"
+
+if ! git -C "$REPOSITORY_DIR" diff --quiet -- build; then
+    echo "FAIL: checked-in build artifacts are not synchronized" >&2
+    git -C "$REPOSITORY_DIR" diff --stat -- build >&2
+    exit 1
+fi
+
+echo "PASS: checked-in build artifacts are synchronized"

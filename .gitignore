@@ -1,9 +1,6 @@
 # Generated test reports
 test-reports/
 
-# Generated Codex-compatible plugins and marketplace
-/build/
-
 # Node modules
 node_modules/
 

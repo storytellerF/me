@@ -12,8 +12,9 @@ This repository is the source of truth for the `me` plugin collection and its po
 ## Codex package generation and validation
 
 - Before validating or loading plugins whose source skills contain Claude routing fields, run `scripts/build-codex-plugin-package.sh --all`. It generates packages in `build/plugins/` and the marketplace at `build/.agents/plugins/marketplace.json`.
+- Commit the generated `build/` directory. Whenever source plugins or the marketplace template change, regenerate it and include the synchronized build artifacts in the same commit.
 - Run `skill-creator/scripts/quick_validate.py` only against generated skill copies, never against Claude-oriented source skills. Validate the corresponding generated plugin manifests as well.
-- Validate changed skills and manifests before handoff. Tell the user when a new Codex thread is needed to load plugin changes.
+- Validate changed skills and manifests, and confirm regenerating `build/` leaves no diff before handoff. Tell the user when a new Codex thread is needed to load plugin changes.
 
 ## Documentation and versioning
 
