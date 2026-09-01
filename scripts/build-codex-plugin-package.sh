@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # Builds Codex-compatible plugin packages without modifying Claude-oriented
-# source skills. All generated Codex artifacts live under the repository build/.
+# source skills. All generated Codex artifacts live under the repository build/codex/.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOSITORY_DIR="$(dirname "$SCRIPT_DIR")"
-BUILD_DIR="$REPOSITORY_DIR/build"
+BUILD_DIR="$REPOSITORY_DIR/build/codex"
 MARKETPLACE_TEMPLATE="$SCRIPT_DIR/templates/marketplace.json.template"
 
 usage() {
@@ -20,7 +20,7 @@ Build Codex-compatible plugin packages. Generated packages have their own
 
 Options:
   --all               Build every plugin under plugins/ and generate the
-                      Codex marketplace at build/.agents/plugins/marketplace.json.
+                      Codex marketplace at build/codex/.agents/plugins/marketplace.json.
   --help, -h          Show this help message.
 EOF
 }
@@ -111,6 +111,6 @@ if [[ "$1" == "--all" ]]; then
     exit 0
 fi
 
-echo "Error: only --all is supported; Codex packages are generated together under build/." >&2
+echo "Error: only --all is supported; Codex packages are generated together under build/codex/." >&2
 usage >&2
 exit 1

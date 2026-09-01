@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOSITORY_DIR="$(dirname "$SCRIPT_DIR")"
-BUILD_DIR="$REPOSITORY_DIR/build"
+BUILD_DIR="$REPOSITORY_DIR/build/codex"
 
 assert_exists() {
     local path="$1"

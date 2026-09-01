@@ -10,21 +10,21 @@ A local Codex developer plugin collection. It includes Android tooling, client U
 - A persistent QEMU Alpine/Docker environment for Windows-hosted test runs.
 - Portable Claude agent prompts bundled with their owning plugins.
 
-Codex-compatible packages and the local marketplace are checked in under `build/`. Maintainers regenerate them with `scripts/build-codex-plugin-package.sh --all` and commit the synchronized output whenever plugin sources change.
+Codex-compatible packages and the marketplace are checked in under `build/codex/`. Maintainers regenerate them with `scripts/build-codex-plugin-package.sh --all` and commit the synchronized output whenever plugin sources change.
 
 ## Installation
 
 ### Codex
 
-Clone the repository and add the checked-in Codex marketplace; no local build step is required:
+Add the checked-in marketplace directly from GitHub; cloning and local generation are not required:
 
-```bash
-git clone https://github.com/storytellerF/me.git
-cd me
-codex plugin marketplace add ./build
-```
+| Field | Value |
+|---|---|
+| Repository | `https://github.com/storytellerF/me` |
+| Path | `build/codex` |
+| Branch | `main` |
 
-After pulling newer commits, the updated marketplace and packages are immediately available from `build/`.
+Use the marketplace sync action to receive newer committed plugin packages.
 
 Install plugins from the marketplace:
 
