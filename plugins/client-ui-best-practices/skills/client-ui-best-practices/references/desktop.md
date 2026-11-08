@@ -1,5 +1,3 @@
-<a id="desktop-and-event-loop-hosts"></a>
-
 # 桌面与事件循环 Host
 
 Host 不依赖窗口、控件、场景和工具包事件对象。在 UI 边界适配其不可变状态和一次性副作用。

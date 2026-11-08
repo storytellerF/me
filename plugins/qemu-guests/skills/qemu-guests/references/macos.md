@@ -1,10 +1,6 @@
-<a id="intel-macos-preparation-and-recovery"></a>
-
 # Intel macOS 准备与恢复
 
-安装前阅读 [macOS 安装要求](../../../README.md#unattended-intel-macos-installation)。遵循 SKILL.md 的共同构建位置与资源归属规则；只选择安装、Appium、GPU 或桌面恢复所需章节。
-
-<a id="installation-and-media"></a>
+安装前阅读 [macOS 安装要求](../../../README.md#intel-macos-无人值守安装)。遵循 SKILL.md 的共同构建位置与资源归属规则；只选择安装、Appium、GPU 或桌面恢复所需章节。
 
 ## 安装与介质
 
@@ -12,7 +8,7 @@ Intel macOS 使用已准备的 Apple 安装介质和 bootstrap product package�
 
 Windows 可通过 OpenCore macrecovery 工具下载 Apple Recovery 镜像，并对照 Apple 签名 chunklist 验证；下载 Recovery 不要求已有 Mac。须区分 Recovery 下载与当前适配器所需的完整安装应用、ISO 及私有 product package。macOS 示例现显式选择 WHPX，但 CPU 参数和私有 OpenCore、固件仍依具体版本而定。
 
-历史 Sonoma、CPUID 缓存和 Mac2 探测记录在[开发证据](../../../DEVELOPMENT.md#experimental-macos-recovery-on-whpx)中。它们不能证明其他版本兼容，也不能证明源码适配器完整无人值守运行。不用实验二进制替换受管运行时，不悄悄回退 TCG，不将 Recovery 下载报告为安装完成。
+历史 Sonoma、CPUID 缓存和 Mac2 探测记录在[开发证据](../../../DEVELOPMENT.md#whpx-上的实验性-macos-recovery)中。它们不能证明其他版本兼容，也不能证明源码适配器完整无人值守运行。不用实验二进制替换受管运行时，不悄悄回退 TCG，不将 Recovery 下载报告为安装完成。
 
 使用 GPT 安装磁盘（准备工具中的 GPTSPUD），以只读 USB 挂载；不能把分区 Apple 镜像当作 ISO9660 光盘。配置 OpenCore 自动引导安装器或目标，并隐藏自身 EFI 条目。解析 startosinstall 的实际 Recovery 挂载路径及明确为空的目标盘；优先使用配置的 QEMU 磁盘序列号，因为 BSD 磁盘号可能随启动改变。宿主机 OCR 使用固定版本 Pillow 放大帧，再严格匹配提示。Windows 生成的 Shell seed 必须保留 LF。
 
@@ -20,23 +16,17 @@ Windows 可通过 OpenCore macrecovery 工具下载 Apple Recovery 镜像，并�
 
 Sequoia 中，即使存在 `.AppleSetupDone` 和持久自动登录，遗留的 `/var/db/.AppleSetupTermsOfService` cookie 仍可能强制打开条款页。首次启动模板对已使用 `--agreetolicense` 的安装清除此独立 cookie。不以点击条款页替代在独立空磁盘上验证修正后的 bootstrap。
 
-<a id="appium-and-display-prerequisites"></a>
-
 ## Appium 与显示前提
 
 Mac2 UI 会话需要兼容的完整 Xcode、已准备的 WebDriverAgentMac 构建，以及为构建出的 runner 和 Xcode Helper 授予的辅助功能权限。只有 Command Line Tools 不够。允许 Mac2 调用 xcodebuild 前，必须获得明确的客户机内构建授权；否则使用指定构建环境及预构建 WDA 端点。真实原生会话、source、截图和点击须与服务就绪分别验证。macOS 未选择开发工具链时，保留启动器的缺失工具处理，避免可选 Git 修订探测打开开发工具安装器。不能仅为此探测安装构建工具。
 
 基础 macOS 帧缓冲可能只暴露启动时选定模式；必要时修改私有 OpenCore UEFI Output Resolution，保留原配置，重启并验证实际模式。macOS 可能在内核关闭前断开 SSH；不能仅凭断开证明关机完成，应等待客户机结束后再强制退出自己管理的 QEMU 进程。
 
-<a id="managed-gpu-runtime"></a>
-
 ## 受管 GPU 运行时
 
-对于已验证的 Windows 11 x64、Intel macOS 15.8.1 GPU 路径，使用随包 `qemu_runtime: "reims-whpx"` 配置和 `scripts/reims_runtime.py`，不用缓存私有实验二进制或相邻源码检出目录。此运行时与 Windows 客户机 `whpx-reset` 分开。依赖版本和补丁位于 `patches/reims-windows`；首次使用通过 GNU Rust 和 MSYS2 UCRT64 构建公开源码，并验证完整运行时。通过 `uv run scripts/prepare-macos-gpu-boot.py` 创建新的操作者自有 EFI 副本，使用随包、带保护的时序修正和固定版本 Lilu；要求系统构建 24H32。不修改运行中启动镜像、不覆盖固件、不绕过失败的驱动哈希或构建保护，也不声称支持新的 macOS 版本。指定准备机器要求见 [GPU 前提](../../../README.md#windows-macos-gpu-runtime)及[驱动构建说明](../../../DEVELOPMENT.md#bundled-windows-macos-gpu-dependencies)。要求实际时钟、帧缓冲和未经修改的业务验收；原生 SDL 呈现和视频解码未验证。
+对于已验证的 Windows 11 x64、Intel macOS 15.8.1 GPU 路径，使用随包 `qemu_runtime: "reims-whpx"` 配置和 `scripts/reims_runtime.py`，不用缓存私有实验二进制或相邻源码检出目录。此运行时与 Windows 客户机 `whpx-reset` 分开。依赖版本和补丁位于 `patches/reims-windows`；首次使用通过 GNU Rust 和 MSYS2 UCRT64 构建公开源码，并验证完整运行时。通过 `uv run scripts/prepare-macos-gpu-boot.py` 创建新的操作者自有 EFI 副本，使用随包、带保护的时序修正和固定版本 Lilu；要求系统构建 24H32。不修改运行中启动镜像、不覆盖固件、不绕过失败的驱动哈希或构建保护，也不声称支持新的 macOS 版本。指定准备机器要求见 [GPU 前提](../../../README.md#windows-上的-macos-gpu-运行时)及[驱动构建说明](../../../DEVELOPMENT.md#随包-windows-macos-gpu-依赖)。要求实际时钟、帧缓冲和未经修改的业务验收；原生 SDL 呈现和视频解码未验证。
 
 冷启动验证只发出一次正常客户机内关机请求，确认原生进程退出后再启动；不要让 ACPI 和 SSH 关机请求竞争。应用测试使用[宿主机驱动测试](test-execution.md)中的 macOS 传输边界；GPU 运行时不提供透明 `java-argfile` 中继。
-
-<a id="prepared-desktop-recovery"></a>
 
 ## 已准备桌面的恢复
 

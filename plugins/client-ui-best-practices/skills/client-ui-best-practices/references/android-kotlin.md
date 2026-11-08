@@ -1,5 +1,3 @@
-<a id="android-and-kotlin-host"></a>
-
 # Android 与 Kotlin Host
 
 使用注入了应用自定义串行调度器的 `CoroutineScope` 协调 Host。不要将此调度器与 `Dispatchers.Main` 混淆，后者仍专用于 Android UI 工作。

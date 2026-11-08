@@ -3,23 +3,15 @@ name: android-emulator-profile
 description: Android 运行或测试需要准备、启动模拟器，配置 AVD 或 SDK 前提条件，或查看模拟器状态与屏幕预览时使用。在内部选择已有设备和配置，不因编辑 Android 代码就创建模拟器。
 ---
 
-<a id="android-emulator-profile"></a>
-
 # Android 模拟器配置
-
-<a id="select-the-environment"></a>
 
 ## 选择环境
 
 执行 Android 运行或测试时，先检查用户要求的 API 级别、设备类型和现有模拟器。复用合适的运行中模拟器，或启动匹配的已有 AVD；仅在需要时准备 SDK 工具、系统镜像和新配置。用户不必点名配置文件或辅助脚本。状态或屏幕查看保持只读。模拟器就绪后，执行项目正常的运行或测试流程；模拟器就绪本身不代表测试通过。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 在操作者环境中准备 SDK、AVD 并定位本 AI 插件的辅助工具。不能仅为准备模拟器，就将其安装路径、私有配置或启动命令写入项目构建、CI 或文档。项目可以声明标准 SDK、AVD 要求并使用普通 adb 和测试命令；Android Gradle 插件和必需测试库仍是正常依赖。明确要求集成 AI 插件时，只处理用户指定的范围。
-
-<a id="bundled-paths"></a>
 
 ## 随包路径
 
@@ -37,8 +29,6 @@ description: Android 运行或测试需要准备、启动模拟器，配置 AVD 
 - `profiles/tablet.profile`
 - `profiles/desktop.profile`
 - `profiles/tv.profile`
-
-<a id="workflows"></a>
 
 ## 工作流程
 
@@ -66,8 +56,6 @@ ANDROID_HOME=${ANDROID_HOME:-$HOME/android-sdk} ./scripts/install-sdk.sh
 python tests/test-start-avd-docker.py
 ```
 
-<a id="configuration-rules"></a>
-
 ## 配置规则
 
 - 使用非默认配置时，将配置路径作为第一个参数。
@@ -80,8 +68,6 @@ python tests/test-start-avd-docker.py
 - 竞争操作期间保留 AVD 启动 guard 和原生锁。恢复前检查中断的 guard 或锁。只停止自己管理的模拟器进程。
 - 新 AVD 在首次生成 userdata 镜像前设置分区大小。调整已有或自定义 userdata 大小需要显式设置 `EMULATOR_ALLOW_DATA_WIPE=true`；未获准擦除该 AVD 数据时，不得启用。
 
-<a id="usage-notes"></a>
-
 ## 使用说明
 
 - 从本 skill 位置定位已安装插件根目录，使用脚本和配置文件的绝对路径。保持目标项目工作目录不变。
@@ -89,15 +75,11 @@ python tests/test-start-avd-docker.py
 - `test-start-avd-docker.py` 使用模拟的 `emulator` 和 `adb` 命令，不启动 Docker 或真实模拟器。
 - 区分宿主机 ADB 服务（5037）与所选模拟器的 ADB 端点（通常为 5555，但以其控制台和 ADB 端口对为准）。先核对虚拟机路由；gvproxy 的宿主机别名可以访问宿主机回环地址。仅在网络确有需要时添加限定范围的端口代理或防火墙规则，不盲目重启共享代理服务。
 
-<a id="read-only-status-and-screen-preview"></a>
-
 ## 只读状态与屏幕预览
 
 调用 `android_emulator_status`，从全局侧栏或对话旁打开 **Android Emulators** 面板。它读取已配置 AVD、ADB 连接和启动就绪状态，不启动或重置设备。MCP Apps 不可用时，用 Python 3 运行 `scripts/emulator_status.py`，概述 JSON 快照。
 
 截屏由面板显式操作触发，使用仅供应用调用的 `android_emulator_screenshot` 工具。不要添加自动截屏轮询。缺少 ADB 连接表示不可用或未知，不能证明全部 AVD 已停止。其他清单目录通过 `ANDROID_AVD_HOME` 指定，明确的 ADB 可执行文件通过 `ANDROID_ADB_COMMAND` 指定；完整查找规则见所属 README。
-
-<a id="python-profile-controller"></a>
 
 ## Python 配置控制器
 
@@ -112,8 +94,6 @@ python tests/test-start-avd-docker.py
 在 Windows 上，共享工具环境边界在启动原生工具前，将继承和配置文件中的 `ANDROID_HOME`、`ANDROID_AVD_HOME`、`ANDROID_USER_HOME` 从 Git Bash 路径转换为原生路径，使工具与配置查找使用相同目录。空值保持为空。
 
 Git Bash 路径转换输出按 UTF-8 读取，不受 Windows ANSI 代码页影响，保证 Unicode SDK 和 AVD 目录名完整。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

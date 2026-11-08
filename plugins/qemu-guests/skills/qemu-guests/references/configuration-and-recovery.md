@@ -1,10 +1,6 @@
-<a id="alpine-backend-configuration-and-recovery"></a>
-
 # Alpine 后端配置与恢复
 
 本参考适用于 Alpine `.profile`，不适用于工作客户机 JSON 配置。遵循 SKILL.md 中共同资源归属规则。
-
-<a id="profiles-and-ports"></a>
 
 ## 配置与端口
 
@@ -25,8 +21,6 @@
 
 控制端口 `GVPROXY_QEMU_PORT`（19200）、`GVPROXY_API_PORT`（19201）仅监听回环，不与转发重叠。恢复需要协调停止、启动 QEMU 与 gvproxy，规则从配置重新生成。
 
-<a id="acceleration-and-provisioning"></a>
-
 ## 加速与安装
 
 `VM_ACCELERATOR=auto` 在 Linux 探测 KVM、Windows 探测 WHPX，否则选择 TCG。设置 `kvm` 或 `whpx` 强制使用对应加速器；不可用时失败，不回退。KVM 和 WHPX 使用 `host`，TCG 使用 `max`。KVM 需要兼容 x86-64 宿主机及 `/dev/kvm` 访问权限；Linux 容器映射该设备并将其组授予容器用户，无需特权模式。命令见插件根 `container/README.md`。
@@ -35,13 +29,9 @@
 
 `PRELOAD_IMAGES` 可在安装期间拉取逗号分隔镜像列表。支持 registry 路径、tag、digest、点、短横线和下划线。否则 Testcontainers 首次拉取，后续由 Docker 从持久磁盘复用镜像层。
 
-<a id="metrics"></a>
-
 ## 指标
 
 `TESTCONTAINERS_RESOURCE_METRICS=auto` 默认在 Windows 每秒采样，在 Linux 跳过 Windows 收集器。显式 `true` 要求 Windows PowerShell。通过 `TESTCONTAINERS_RESOURCE_METRICS_INTERVAL=1` 调整间隔（1–60 秒），PowerShell 不可用时可禁用。最新 JSON 报告位于虚拟机基目录下 `metrics/latest.json`，记录耗时及聚合资源值，不记录测试命令或工作目录路径。
-
-<a id="limitations-and-recovery"></a>
 
 ## 限制与恢复
 
@@ -54,8 +44,6 @@ QEMU 创建前的明确失败（包括日志访问和进程创建错误）自动
 Docker 运行在远程客户机，宿主机或外层容器路径不能作为普通 bind mount。优先用 Docker 构建上下文、具名卷或通过 Docker API 复制的测试夹具。
 
 安装留下磁盘却没有就绪标记时，检查安装和验证控制台日志。已确认安装完成、仅验证失败时，在恢复配置中设置 `VERIFY_EXISTING=true`，运行 `./scripts/create-vm.sh <recovery-profile>` 继续验证。除非用户明确选择重建，否则不删除虚拟机目录。
-
-<a id="profile-and-host-controls"></a>
 
 ## 配置文件与宿主机控制项
 

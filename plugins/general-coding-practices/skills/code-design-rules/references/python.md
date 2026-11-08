@@ -1,5 +1,3 @@
-<a id="python-and-asyncio"></a>
-
 # Python 与 asyncio
 
 - asyncio 代码优先使用 `async`/`await`；项目 Python 版本支持时（3.11+），使用 `asyncio.TaskGroup`。独立创建的任务应保留管理者或引用、观察异常，并在关闭时取消并等待其结束。
@@ -11,8 +9,6 @@
 将状态建模为独立 dataclass 的联合，例如 `Idle`、`Loading`、`Success(value)` 和 `Failure(cause)`。必需数据通过构造函数传入，只有缺失合法时才使用 `None`，并验证外部输入。Python 类型注解和 `match` 本身不保证运行时类型有效或分支穷尽；使用项目的类型检查器，并显式处理不支持的事件。
 
 在 docstring 中说明管理责任、取消、产出的值和清理。通过受控 future 或 event 验证任务清理、异常传播和过时结果，避免依赖实际时间的休眠。
-
-<a id="callback-and-listener-adaptation"></a>
 
 ## 回调与监听器适配
 

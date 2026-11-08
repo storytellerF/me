@@ -1,5 +1,3 @@
-<a id="recyclerview-best-practice-plugin"></a>
-
 # RecyclerView 最佳实践插件
 
 本可移植插件提供 Android RecyclerView 指引，用于创建、审查和重构列表 UI 代码。
@@ -8,13 +6,9 @@
 
 功能状态和副作用遵循独立于框架的 Host 约定；Android ViewModel 可将 Host 适配到视图生命周期。前插哨兵会改变差异位置，但屏幕外的哨兵不保证可见性或锚定。验证实际布局和状态恢复行为；Paging 页眉使用 `ConcatAdapter` 或 `insertHeaderItem`。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 adapter 和哨兵实现归使用插件的项目所有，使用正常 AndroidX 依赖。两个 skill 均不让项目依赖本 AI 插件安装；所需 Android、Gradle 和编译器插件仍为普通依赖。
-
-<a id="contents"></a>
 
 ## 内容
 
@@ -22,13 +16,9 @@ adapter 和哨兵实现归使用插件的项目所有，使用正常 AndroidX �
 - `skills/android-recyclerview-best-practice/SKILL.md` 提供 RecyclerView 指引。
 - `skills/recyclerview-sentinel-viewholder/SKILL.md` 提供通过起始哨兵 ViewHolder 改善前插锚定的方法。
 
-<a id="plugin-packaging"></a>
-
 ## 插件打包
 
 `plugin.json` 是可移植元数据的权威来源。客户端清单与完整 skill 资源会生成到 `me.claude` 和 `me.codex`，请从这两个仓库安装。源 skill 使用可移植的 frontmatter。Claude 路由按 skill 目录保存在 `extensions.com.anthropic.claude.skillFrontmatter` 中，仅注入生成的 Claude skill。Codex 的 skill 文件保持源文件原样复制。
-
-<a id="improvement-feedback"></a>
 
 ## 改进反馈
 

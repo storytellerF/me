@@ -1,19 +1,15 @@
-<a id="qemu-guests-development"></a>
 # QEMU Guests 开发
 
-<a id="skill-guidance-and-validation-scope"></a>
 ## Skill 指引与验证范围
 
 skill 入口负责通用的环境选择、使用项目的独立性、构建位置、归属和状态解释。参考资料分别说明工作虚拟机准备、macOS 专用流程、主机驱动测试、Alpine 后端操作与配置，以及实现维护。平台限定条件和失败约定保留在对应参考中；历史实验依据记录在本文，不在每次调用中重复。
 
 只修改指引时，验证可移植 frontmatter、相对链接和两套生成发行包。维护参考中列出的后端辅助测试使用夹具。`scripts/build-docker-proxy.sh` 是实际后端操作，可能安装 Go 并编译代理，不得列入纯离线验证。原生虚拟机、重启、桌面和 Testcontainers 验收仍是各自限定范围、使用隔离资源的独立测试。
 
-<a id="windows-fallback-tool-paths"></a>
 ## Windows 工具回退路径
 
 在 Git Bash 中配合单独的 MSYS2 安装运行 `bash ./tests/test-msys2-path.sh`，检查回退路径顺序、重复初始化、已有命令选择，以及代理变量向子 Bash 的传递。测试还会启动可用的 QEMU 和 xorriso 二进制检查版本，不使用虚拟机。
 
-<a id="gvproxy-port-allocation-audit"></a>
 ## gvproxy 端口分配审计
 
 Windows 和 Linux 的默认池现为 20000–20127。过去默认 16／256 个端口、上限 512 的限制来自旧网络策略，不是 gvproxy 协议限制。[上游 v0.9.0 转发器](https://github.com/containers/gvisor-tap-vsock/blob/v0.9.0/pkg/services/forwarder/ports.go)维护监听器映射，报告实际绑定失败。它支持 TCP 和 UDP；本插件 profile 格式与注册仍仅支持 TCP。转发器不支持 SCTP。运行时不再包含旧 QEMU user-networking 后端、DNS 代理、迁移变通处理或 QEMU 监听器数量检查。
@@ -24,7 +20,6 @@ Windows 和 Linux 的默认池现为 20000–20127。过去默认 16／256 个�
 
 审查期间，共享持久虚拟机被活动测试操作持有租约，因此不声称完成真实虚拟机重启、分配器迁移、全新 ISO 安装或新的应用负载测试。Linux 运行时／描述符测试属于 CI；本地 Windows 运行无法证明实际 KVM 或 Linux arm64 行为。下文早期迁移负载结果仍仅代表当时版本和范围。
 
-<a id="verification-and-architecture"></a>
 ## 验证与架构
 
 端口配置测试不需要 QEMU 或虚拟机访问：
@@ -88,7 +83,6 @@ Windows Docker CLI 代理通过虚拟机 Go 测试与原生构建，并构建 Li
 
 插件／运行时检查后完成下游服务器验证：三个聚焦用例通过，随后完整套件通过 175 项测试（174 通过、零失败／错误、一个已有跳过），使用 JDK 21，断言和超时不变。完整命令含镜像任务耗时 1247 秒。
 
-<a id="concurrent-work-guest-controller"></a>
 ## 并发工作虚拟机控制器
 
 `guest_config.py` 独立于 Alpine shell profile 验证 JSON profile。`guest_seed.py` 使用 pycdlib 从 `templates/guests/` 渲染私有无人值守介质。`guest-vm.py` 以状态目录租约监督前台原生 QEMU 进程，信号延迟处理覆盖进程创建与记录发布。停止请求携带会话 token；清理失败保留归属证据。工作虚拟机不获取 Alpine 后端预留。
@@ -97,7 +91,6 @@ Windows Docker CLI 代理通过虚拟机 Go 测试与原生构建，并构建 Li
 
 默认验收检查虚拟机 SSH 与 Docker 服务器访问，Ubuntu 还检查 cloud-init 完成。自定义适配器自行负责安装和验收。状态 MCP App 还读取工作虚拟机注册表，暴露独立的仅应用可用 PNG 捕获工具。所有生成文件必须放在私有状态目录，绝不写入本仓库。后端改名后保留旧存储路径。显式代理 target 写入 OS／架构子目录，保留用户级构建租约。
 
-<a id="graphical-guests-and-macos-installation"></a>
 ## 图形虚拟机与 macOS 安装
 
 `guest_registry.py` 为每个规范化状态目录保存一个原子公开描述符。状态检查同时验证 QEMU 与 supervisor 原生身份和匹配 token。`guest_screen.py` 只解析已注册 ID，在有界 PNG 捕获前检查 QMP 监听器归属，成功或失败都删除私有临时文件。`ScreenHost` 独立于渲染管理选择、轮询、可见性和迟到结果拒绝。面板不提供远程 HTTP／VNC 服务器或输入工具。
@@ -106,14 +99,12 @@ Windows Docker CLI 代理通过虚拟机 Go 测试与原生构建，并构建 Li
 
 macOS 准备在一台准备用 Mac 上使用 Apple 工具。`macos_install.py` 运行时控制器仅在有界 OCR 后打开 Recovery 终端，发送固定 seed 脚本路径。持久交接标记防止破坏性重试；seed 脚本拒绝已分区目标磁盘。产品包 payload 通过首次启动 LaunchDaemon 配置账户、SSH 和 Docker。测试验证生成脚本与控制事件；实际安装器兼容性须使用匹配固件和介质检查。缺少准备用 Mac 时，准备脚本及安装包尚未在 macOS 执行，不能仅凭渲染测试就声称已安装或验证。
 
-<a id="work-guest-integration-evidence"></a>
 ## 工作虚拟机集成依据
 
 Windows 11 build 26200 配合 QEMU 11.0.1／WHPX，并发运行三个独立工作虚拟机：Ubuntu 24.04 XFCE／LightDM、无头 Ubuntu 24.04 和 Windows Server 2025 Desktop Experience。每台都构建私有 Docker context，访问共享 Linux daemon API，获取自己的已发布 HTTP 响应。两个图形虚拟机返回真实 PNG 帧，无头虚拟机没有屏幕端点。停止一个工作虚拟机不影响其余虚拟机和后端。修正原生 SSH 防火墙规则仅 Private profile 的问题后，全新 Windows 安装通过两次受监督冷启动完成无人值守安装。
 
 历史 Windows WHPX 对比：QEMU 11.0.1 忽略 CPU-model 参数，四 vCPU 停滞，一 vCPU 可启动。QEMU 11.1 配合 `Westmere,-vmx,-svm` 能以虚拟机可见四处理器冷启动保留的 Windows 磁盘，default 和 host 模型失败。虚拟机热重置仍在 BIOS 启动时产生 VP exit code 4，禁用中断控制器也不能提供可用替代。新的 Windows 默认值改为使用下述受管理 partition-reset 构建和四 vCPU。显式旧 system-runtime profile 可保留干净退出的冷启动预算。意外退出不重试，也不回退加速器。图形 supervisor 观察 QMP paused 状态，避免仍存活但已暂停的原生进程继续标为 ready；暂停屏幕仍可查看。
 
-<a id="whpx-four-vcpu-windows-reboots"></a>
 ### WHPX 四 vCPU Windows 重启
 
 `scripts/whpx_runtime.py` 管理集成构建、缓存和打包。源码 SHA-256 与有序补丁均固定；补丁名称／内容和 shell 模板内容决定独立缓存目录。构建取得独占目录预留，控制台取消后保留预留以便检查进程。源码校验和或编译器失败绝不启动虚拟机。全新解压使用 Python data filter，排除符号链接及未用固件源码／CI 目录树。构建编排位于 `templates/build-whpx-qemu.sh`，不生成 shell 字符串。构建器从 UCRT64 和源码固件打包 PE 依赖闭包，写入文件哈希，验证后原子发布完整目录。返回可执行文件前，在最终路径执行加速器探测；若先执行暂存 PE，Windows 镜像／杀毒句柄可能阻止目录重命名。失败工作区保留，不修改系统 QEMU。
@@ -162,7 +153,6 @@ uv run --script tests/validate-live-panel.py --profile C:/private/windows.json -
 
 通过虚拟机 SSH 登录调用 Docker 代理时，Windows 系统 OpenSSH 子进程在 stdin／output 停滞。Windows 代理命令 I/O 现直接使用 `golang.org/x/crypto/ssh`，保留已有私有后端 host-key 策略和远程退出码。Linux／macOS 继续使用系统客户端。传输测试覆盖二进制数据、EOF、多会话、远程失败状态和 stdin 仍打开但未使用时命令完成，在原生 Windows 及 Alpine race detector 下通过。固定依赖要求 Go 1.26。变更后真实跨系统验收通过。密钥、介质、生成凭据、详细报告和截图留在仓库外。
 
-<a id="experimental-macos-recovery-on-whpx"></a>
 ### WHPX 上的实验性 macOS Recovery
 
 OpenCore、固件和 SATA 布局参考 [OSX-KVM](https://github.com/kholia/OSX-KVM/tree/4c378a4b5e0b219783683012bec680325eb40719)，不复制其 Linux KVM 加速器／CPU 参数。测试源码为该提交。其手动 Disk Utility 安装不属于无人值守准备。
@@ -181,7 +171,6 @@ Shift-Command-T 打开 Recovery Terminal。批量按下／释放会丢失释放�
 
 原生 SSH 接受密钥后，以 `Access denied ... by PAM account configuration` 关闭。将工作用户加入已有 `com.apple.access_ssh` 组后解决。首次启动现会执行此操作；组不存在时不创建新限制。每用户 Setup Assistant 偏好还避免账户创建后显示无障碍／云页面。确认键盘输入有效后关闭 QEMU 键盘识别提示；加速图形和任意发行版不在此次验证范围。随包适配器仍要求准备好的完整安装介质和 bootstrap 包；缓存拓扑补丁仍属实验，并非默认受管理 Windows 构建的一部分。镜像、固件 variables、账户凭据和详细日志保持私有。
 
-<a id="independent-appium-work-guests"></a>
 ## 独立 Appium 工作虚拟机
 
 工作虚拟机 profile 现要求 `appium`（运行时归档、SHA-256 和独立主机隧道端口），拒绝已移除的 `backend`／`proxy_binary` 字段。seed 不含 Docker 代理或 Alpine 密钥。Alpine 主机 Docker 流程仍独立。虚拟机验收检查认证 SSH 和回环 Appium 就绪响应，Ubuntu 另检查 cloud-init。Windows 保留专用测试账户登录，并以交互式计划任务启动 Appium；SSH Session 0 绝不启动桌面应用。macOS 安装用户 LaunchAgent，Appium 验收前要求用户已登录。Linux 服务就绪不能证明 X11／AT-SPI 驱动兼容；这些前提由使用项目负责。
@@ -192,14 +181,12 @@ Shift-Command-T 打开 Recovery Terminal。批量按下／释放会丢失释放�
 
 工作虚拟机资源策略：编译默认在主机或既有指定构建环境执行，仅向工作虚拟机传输预构建产物和依赖。虚拟机编译，包括构建原生代码的依赖安装 hook，都需要用户明确要求。安装虚拟机／Appium 或请求测试不属于该授权；不得添加虚拟机构建回退，也不得为容纳编译而增加虚拟机资源。
 
-<a id="project-owned-runtime-requirements"></a>
 ## 项目自身的运行时要求
 
 `test_requirements.py` 验证可移植平台要求和预构建运行时清单。`project_setup_hooks.py` 管理有界主机准备作用域；`run-setup-hooks.cjs.tpl` 执行已暂存的虚拟机初始化脚本，使用私有日志，不进行 shell 参数求值。虚拟机 hook 仅用于运行时，编译仍需要用户明确例外授权。`guest_desktop.py` 从项目要求推导桌面初始化数据，不把依赖列表存入虚拟机硬件 profile。新虚拟机私下记录要求／脚本指纹；普通测试执行拒绝过时初始化。
 
 运行 `tests/test-desktop-provisioning.py` 和 `tests/test-project-setup-hooks.py`，覆盖声明边界、seed 设置、预构建清单、hook 失败／参数处理和指纹失效。`tests/test-work-guests.py` 覆盖小型无二进制 cloud-init 文档和有界就绪探测。可选 Windows 显示辅助程序由主机准备工具编译，只在虚拟机加载；绝不替换为虚拟机中的 `Add-Type -TypeDefinition`。
 
-<a id="config-driven-test-proxy"></a>
 ## 配置驱动的测试代理
 
 `run-test-env.sh` 是统一主机入口。`--profile` 分支保留原后端环境／租约／指标实现；`--config` 委派给 Python 环境管理者，只启用已声明适配器。旧脚本仅是 exec 别名。Windows／Linux JVM Appium relay 镜像配置的文件角色。Linux 将启动 capability 和带引号的 JVM 参数文件重写为目标 JDK 与 POSIX 产物路径，其他 WebDriver 流量不变。测试方法不执行 SSH 或暂存。创建会话时上传当前 classpath／JDK／agent 产物和每例输入。输出收集先于会话响应与诊断。驱动重启期间保留虚拟机私有状态，仅在运行退出时于配置的后代根目录下删除。每虚拟机测试租约串行化桌面使用。主机命令使用共享作用域进程组／Windows Job Object 运行时，由 scripts/sync-process-runtime.py 打包；不支持虚拟机构建命令。
@@ -236,7 +223,6 @@ Windows 虚拟机传输通过 OpenSSH stdin command mode 发送 PowerShell 脚�
 
 Ubuntu console 验收要求配置的测试用户有真实 XFCE 会话。隔离 Xvfb 测试会话保持 display :99：自动分配可能在 LightDM 启动前占用 :0，阻止 console 登录。LightDM 的 user-session 和 autologin-session 均配置为 xfce；仅安装 XFCE 不会替换不可用的默认 ubuntu 会话。
 
-<a id="runtime-and-session-failure-boundaries"></a>
 ## 运行时与会话失败边界
 
 relay 用 IDLE、REQUESTING 和 UNKNOWN 建模创建。只有可解析的成功响应且 session ID 为非空字符串时，才发布会话归属。分发后的传输／解析失败进入 UNKNOWN；分发中断保持 REQUESTING。关闭这两种未解决状态时，先于本地输入清理抛出 CleanupUncertain，因此即使 HTTP handler 已将原错误转换为 502，环境管理者仍保留租约。不要从客户端断开推断远端已回滚，也不要枚举／删除任意上游会话。
@@ -249,7 +235,6 @@ relay 用 IDLE、REQUESTING 和 UNKNOWN 建模创建。只有可解析的成功�
 
 test-work-guests.py 的原生多 QEMU 冒烟须显式启用：只有原生进程启动已获授权时，才设置 QEMU_TEST_ACCEL（Windows 为 WHPX，Linux 为 KVM）。未设置时直接跳过，不启动 QEMU。没有默认 TCG 选项。可选冒烟当前使用固定转发端口，应串行运行；默认源码／客户端失败路径检查无需启动虚拟机。
 
-<a id="structural-ownership-and-initialization-snapshots"></a>
 ## 结构化归属与初始化快照
 
 TestEnvironmentOwner 通过私有 ExitStack 管理每种已配置执行模式：主机进程树，以及可能存在的临时工作区、SSH 传输和 Appium relay。本地／仅 Docker 模式不带 home 构造；acquire_lease(home) 在获取虚拟机资源前附加可选虚拟机预留。带 home 构造仍是直接作用域虚拟机使用的便捷方式。OwnerState 独立于是否存在虚拟机租约建模执行生命周期。租约获取失败不认领外部预留，第二次获取不能替换已持有预留。虚拟机资源通过 owner.callback／owner.enter_context 注册。主机 CommandTree.stop 回调在启动前注册，使管理者能在进程树清理替换原取消前观察到它。每次清理失败，包括中断，都会在下次清理前设置内存 RETAINED 并持久化 cleanup-uncertain。保留状态不可逆：后续异常或上下文管理器抑制都不能使其可释放。发布保留状态失败时预留不变，仍尝试剩余清理。普通测试失败后清理成功会释放活动租约；已变化或外部归属绝不覆盖／删除。CleanupUncertain 属于此管理模块；代理通过共享契约报告不确定，不管理租约。不要仅凭最终异常推断保留，也不要扫描异常链重建已丢失的归属状态。
@@ -291,7 +276,6 @@ InitializationSnapshot 捕获原 requirements 字节、独立 record JSON、暂�
 
 relay 在服务器 shutdown 或等待会话锁之前切换为 CLOSED，再于该锁下排空活动 worker，最后清理启动资源。先前已接受但关闭后才读完正文的 HTTP worker，必须在暂存文件或联系上游前拒绝请求。归属套件通过在请求体边界暂停的真实回环连接验证，不启动虚拟机或应用。
 
-<a id="bundled-windows-macos-gpu-dependencies"></a>
 ## 随包 Windows macOS GPU 依赖
 
 `patches/reims-windows/sources.json` 固定三个公开源码修订及补丁哈希。补丁保留已测试的本地 Windows 移植：Reims 平台内存和 C API、metal2vulkan 运行时主机内存支持，以及 QEMU 的 WHPX／section 后备 RAM 集成。`reims_sources.py` 在检出前捕获 lock、补丁和构建模板，仅在全新缓存工作区应用。绝不能指向贡献者已有检出目录。Reims QEMU gitlink 有意不包含在补丁中；QEMU 根据同一 lock 单独获取和修补。插件 `.gitattributes` 将带校验和的补丁／驱动文件及 GPU 构建模板保持 LF，将 kext 二进制标为非文本。临时仓库在 `core.autocrlf=true` 下检出，16 个发布输入均逐字节不变；更新或分发时保留这些属性。三个补丁文件的空白例外用于保留 Makefile tab 前的 unified-diff 上下文前缀，以及末尾空白上下文行；普通源码仍执行正常空白检查。不要规范化补丁字节。
@@ -311,7 +295,6 @@ EFI 准备将每个已验证驱动文件只捕获一次，放入不可变 `Drive
 
 另一副本在 ACPI 电源按钮请求与 SSH shutdown 竞争后停滞。已暂停并保留内存、磁盘及归属证据，根因尚未确认。成功冷启动验收使用单次正常虚拟机内关机请求，确认原生退出后才重启。不要声称 ACPI 关机或睡眠／恢复已验收。
 
-<a id="prepared-intel-macos-desktop-recovery"></a>
 ## 已准备 Intel macOS 桌面恢复
 
 Sequoia loginwindow 在普通安装完成前单独检查 `/var/db/.AppleSetupTermsOfService` cookie。一次诊断 macOS 15.8.1 启动在 `startosinstall --agreetolicense` 后仍保留该 cookie；即使账户、`.AppleSetupDone` 和自动登录配置有效，日志仍报告 `Setup launch
@@ -339,7 +322,6 @@ WDA 缓存 Accessibility 信任，因此协调从全新 runner 和实际原生�
 
 一次干净 Intel macOS 15.8.1（24H32）运行以四 vCPU 和 4096 MiB RAM 完成安装、自动登录、已准备运行时部署、原生 Accessibility 修复和两次冷启动，全程无需手动交互。准备资产含 Xcode 16.2（16C5032a）和 Mac2 4.5.0；虚拟机未运行 WDA 或应用构建。配合另行提供的实验显示运行时，八个即时／定时 Metal 帧匹配实际帧缓冲颜色，1800 个 CoreVideo 样本无超过 100 ms 的 target／clock 偏差。这些 GPU 结果不能证明插件默认受管理运行时具备 GPU 支持。未改动外部桌面业务套件随后通过操作者管理的 Mac2 启动适配器，18 项全部通过，零失败／错误／跳过；此适配器独立于插件 Windows／Ubuntu 透明 JVM relay。完整生命周期发布验收前，已清理虚拟机会话、应用包和 SSH 转发；虚拟机保持运行，测试租约释放。
 
-<a id="ubuntu-virglwhpx-runtime"></a>
 ## Ubuntu VirGL／WHPX 运行时
 
 `scripts/virgl_runtime.py` 构建可选 Ubuntu 运行时，不使用私有实验二进制。不可变快照捕获 `patches/viogpu-windows/sources.json` 中公开 QEMU 和 VirGLrenderer 固定版本、已检查补丁字节、两个 WHPX 补丁，以及 `templates/build-virgl-whpx.sh`。不会为 Ubuntu 构建或安装 Mesa Windows 虚拟机驱动。缓存身份包含这些捕获输入；归档在私有位置复制，解压前验证 SHA-256。recipe 变化使用独立缓存目录。忙碌／中断构建保留预留，直到检查完成。完整运行时包含递归 DLL 依赖、固件、源码许可证和捕获的 recipe。
@@ -376,12 +358,10 @@ python scripts/test-qmp-snapshot-native.py --qemu-source /private/build/qemu-11.
 
 原生回归检查 40 例，覆盖方向、裁剪、尺寸、填充行、已绑定 pixel-pack buffer，以及 GL 失败和恢复。还将 pack-state 规范化做变异负对照，要求回归检测出错误。虚拟机验收须将实际 QMP PNG 与原生截图比较，执行暂停／恢复与显示缩放，并在未改动业务测试期间持续通过注册的屏幕工具捕获。释放测试租约前，在清理中恢复显示模式并恢复虚拟机运行。
 
-<a id="experimental-viogpu-source-bundle"></a>
 ## 实验性 viogpu 源码包
 
 `patches/viogpu-windows/sources.json` 锁定源码修订／归档哈希、补丁字节，以及每个修改文件的前后哈希。源码包括 QEMU 11.1.2、VirGLrenderer 1.3.0 和固定的 `arehnman/virtio-win-mesa` 修订。VirGL 补丁先包含两个 MSYS2 1.3.0 构建兼容变更（`void` 原型和条件 `sys/ioccom.h` include），再包含功能性回读修复。分发构建时保留上游许可证声明；不随包提供第三方二进制、私有 profile、原始应用日志或凭据。
 
-<a id="prepare-and-verify"></a>
 ### 准备与验证
 
 下载 lock 指定归档，解压前验证 SHA-256。使用全新 LF 源码检出，绝不修补操作者工作目录。验证器在临时目录检查捕获字节，不修改提供的源码路径：
@@ -408,7 +388,6 @@ meson compile -C /private/build/virgl
 -Dvulkan-drivers=[] -Dvideo-codecs=[] --buildtype=debugoptimized`。
 这些是主机构建前提，不是测试虚拟机中要安装的包。
 
-<a id="ownership-and-regression-contracts"></a>
 ### 归属与回归约定
 
 虚拟机 clear 操作独立于 framebuffer 绑定管理自己的 view：借用匹配的已绑定 handle，否则创建／清除／删除临时 surface。回读适配器管理 layer 遍历和虚拟机偏移。每个 layer worker 管理紧密排列的临时 buffer，只转换有效像素，再按虚拟机 row／layer stride 分散写入。D24S8 和 Z24X8 使用整数位变换。这增加逐 layer 分配／复制，吞吐尚未基准测试。GL read 失败必须在转换／发布前返回错误。恢复 read 和 draw framebuffer 绑定。根据 capability 选择备用 texture 路径，不能在失败后将其当作重试。多重采样资源要求显式 resolve。后续 layer 失败不会回滚先前成功发布的 layer。
@@ -433,14 +412,12 @@ python plugins/qemu-guests/scripts/test-viogpu-native.py \
 
 Java 测试应用若加载系统 EGL／GLES 而非随包 ANGLE，使用仅限测试启动作用域的空 `java.library.path`，确认实际加载模块。不要将此变通处理强加到全部 Java 进程或全部使用项目。使用正常运行器管理的临时 Appium 连接；本包不包含持久隧道服务。
 
-<a id="qualification-limits"></a>
 ### 验收限制
 
 干净随包 VirGL 源码已重建并通过原生回归。等效实验运行时通过虚拟机硬件／WARP clear，以及两个带截图的代表性使用项目桌面 E2E 用例。更早 renderer 通过过完整 18 例套件和热重启恢复，但那些结果不能验收最新 DLL。实验已验证隐藏启动和主线程 reset。本次验证干净源码上的 QEMU／Mesa 补丁应用；它们曾在实验中构建，本次打包检查未重新构建。
 
 这是 Windows x64 原生 OpenGL，虚拟机 D3D feature level 10.0／ANGLE ES2。不代表 GLES、全部格式、主机注销／session 0、主机开机自启、全新镜像无人值守 GPU 安装或长期可靠性已验收。另一个先前存在的默认窗口 OpenGL 回读问题不在本包范围。使用项目验收产物保持私有；验收新构建的完整运行时时，重跑完整套件、截图和热恢复。
 
-<a id="offline-shell-boundary-regressions"></a>
 ## 离线 Shell 边界回归
 
-从 `me` 源码检出目录运行 Python 套件，其中可用共享夹具与命令归属运行时。前提、约定清单和保留的平台测试见[仓库开发文档](../../DEVELOPMENT.md#shell-boundary-regression-tests)。
+从 `me` 源码检出目录运行 Python 套件，其中可用共享夹具与命令归属运行时。前提、约定清单和保留的平台测试见[仓库开发文档](../../DEVELOPMENT.md#shell-边界回归测试)。

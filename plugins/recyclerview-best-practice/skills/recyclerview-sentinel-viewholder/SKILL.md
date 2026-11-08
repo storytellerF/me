@@ -3,17 +3,11 @@ name: recyclerview-sentinel-viewholder
 description: 诊断或修复聊天、时间线、信息流及顶部刷新列表中 RecyclerView 前插可见性、滚动锚定或插入动画问题，或用户明确要求哨兵行时使用。先判断是否适合，不为每个 RecyclerView 都添加哨兵。
 ---
 
-<a id="recyclerview-sentinel-viewholder"></a>
-
 # RecyclerView 哨兵 ViewHolder
-
-<a id="project-independence"></a>
 
 ## 使用项目的独立性
 
 哨兵作为项目自身的 UI 数据和 adapter 代码实现，使用正常 AndroidX 依赖。不要让渲染、测试或项目指引依赖本 AI 插件的名称、文件或安装。必需构建插件、编译器插件和库仍为普通项目依赖，可正常声明。
-
-<a id="core-trick"></a>
 
 ## 核心方法
 
@@ -38,8 +32,6 @@ diff: insert item 0 at adapter position 1
 ```
 
 哨兵始终作为稳定首行，将差异插入下标变为 1。但这本身不保证可见性或滚动行为：屏幕外的哨兵仍在可见锚点之前。应结合实际 LayoutManager、滚动位置、反向布局和条目高度，验证预期布局与锚定行为。
-
-<a id="data-model"></a>
 
 ## 数据模型
 
@@ -72,8 +64,6 @@ fun List<ItemUiModel>.withSentinel(): List<RowUiModel> {
 }
 ```
 
-<a id="diff-contract"></a>
-
 ## 差异计算约定
 
 哨兵必须始终被识别为同一条目。
@@ -94,8 +84,6 @@ object RowDiff : DiffUtil.ItemCallback<RowUiModel>() {
 - 普通行不得复用哨兵 ID。
 - 标识中包含行类型，让 `Sentinel` 和 `Item(Long.MIN_VALUE)` 永不冲突。
 - 启用 `setHasStableIds(true)` 时，`getItemId` 一致返回 `stableId`。
-
-<a id="viewholder-shape"></a>
 
 ## ViewHolder 结构
 
@@ -121,8 +109,6 @@ override fun getItemViewType(position: Int): Int {
 - 谨慎使用 `0dp` 高度。它可作为纯差异锚点，但若体验依赖可见性或动画，需要在目标布局中测试。
 - 哨兵使无内容时的 `itemCount` 也非零，因此 `PREVENT_WHEN_EMPTY` 不会等真实行到达才恢复状态。必要时采用显式恢复策略，或分别管理页眉和内容 adapter。
 
-<a id="adapter-position-helpers"></a>
-
 ## Adapter 位置辅助方法
 
 adapter 位置 `0` 已是哨兵，不能将原始 adapter 位置直接作为业务位置。
@@ -145,8 +131,6 @@ fun itemIndexToAdapterPosition(itemIndex: Int): Int {
 - 调用 `scrollToPosition`、`smoothScrollToPosition` 或 `findViewHolderForAdapterPosition` 前，转换条目下标。
 - 测试同时断言原始 adapter 位置和用户可见条目下标。
 
-<a id="paging-notes"></a>
-
 ## Paging 说明
 
 `PagingDataAdapter` 优先使用 Paging 内置行为。只有 adapter 在分页流之外管理顶部行时，才使用哨兵。
@@ -157,8 +141,6 @@ fun itemIndexToAdapterPosition(itemIndex: Int): Int {
 - 若代码库已经管理该管线，也可先映射为共享行模型类型，再使用 Paging 的 `insertHeaderItem`。仅映射条目不会添加页眉。
 
 不要向数据库分页源注入哨兵。它属于 UI 结构，不是领域数据。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

@@ -3,19 +3,13 @@ name: diff-sharing
 description: 用户需要可浏览的 HTML 代码差异报告，或预览、分享分支、PR、提交及工作区变更的 URL 时使用。没有报告、预览或分享请求的普通 Git 查看、代码审查和补丁编辑不触发。
 ---
 
-<a id="diff-sharing"></a>
-
 # 代码差异分享
 
 预览或分享测试报告时，若可用，使用 `test-report-sharing`。本 skill 生成差异站点；普通代码查看或审查无需启动报告服务。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 通过外部定位的辅助工具和插件报告缓存渲染、提供差异。不能仅为分享差异就修改项目构建、CI、依赖或文档，内置辅助工具，或添加 AI 插件命令。隧道凭据和进程状态留在项目外。用户明确要求时，可以添加项目自有文档、报告产物或持久集成；正常 Git 和构建插件依赖不受影响。
-
-<a id="required-behavior"></a>
 
 ## 必需行为
 
@@ -29,13 +23,9 @@ description: 用户需要可浏览的 HTML 代码差异报告，或预览、分�
 - 返回实际公开或本地 URL、比较引用、默认渲染器和差异统计。
 - 从已安装插件根目录定位脚本，在目标项目中通过绝对路径调用。下方相对路径快速示例用于源码检出目录。
 
-<a id="runtime"></a>
-
 ## 运行时
 
 全部控制逻辑使用 Python 3.10+ 标准库。已有 `.sh` 是轻量启动入口，每个都有同名 `.py` 供原生直接执行。显式相对输出路径以原调用目录解析，不改变调用者工作目录。运行时不依赖 GNU 文本工具或 jq。
-
-<a id="quick-start"></a>
 
 ## 快速开始
 
@@ -44,8 +34,6 @@ plugins/diff-sharing/scripts/generate-diff-report.sh
 plugins/diff-sharing/scripts/generate-diff-site.sh
 plugins/diff-sharing/scripts/start-ngrok.sh --local-only
 ```
-
-<a id="configuration"></a>
 
 ## 配置
 
@@ -62,16 +50,12 @@ plugins/diff-sharing/scripts/start-ngrok.sh --local-only
 - `DIFFTASTIC_SKIP_UNCHANGED`：省略未变更文件，默认 `true`。
 - `DIFFTASTIC_PARSE_ERROR_LIMIT`：回退逐行比较前允许的解析错误数，默认 `100`。
 
-<a id="bundled-resources"></a>
-
 ## 随包资源
 
 - `scripts/generate-diff-report.sh`：生成 Git 与 Difftastic HTML 报告。
 - `scripts/generate-diff-site.sh`：组装包含差异的静态站点。
 - `scripts/start-ngrok.sh`：通过 ngrok 或本地服务提供站点。
 - `templates/diff-report.html` 与 `templates/diff-report.css`：差异页模板和样式表。
-
-<a id="failure-handling"></a>
 
 ## 失败处理
 
@@ -84,8 +68,6 @@ plugins/diff-sharing/scripts/start-ngrok.sh --local-only
 ## 快照发布
 
 每次成功生成都会发布完整快照。构建失败时旧报告仍可访问，已打开页面保留原资源。启动器 URL 打开最新快照。旧代次继续保留；只有服务和读取者均结束后，才移除专用报告缓存。无效比较引用明确失败，不替换为其他历史。Difftastic 已安装但渲染失败时，页面选择可用的 Git diff。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

@@ -1,5 +1,3 @@
-<a id="swift-and-apple-platforms"></a>
-
 # Swift 与 Apple 平台
 
 - 对有明确管理者的并发任务，优先使用 `async`/`await`、`async let` 和任务组。非结构化 `Task` 需要明确的管理责任和取消机制；不要把 `Task.detached` 当作会继承生命周期或 actor 隔离的子任务。
@@ -18,8 +16,6 @@ enum LoadState<Value> {
 ```
 
 使用穷尽的 `switch`。仅当缺失值合法时，成功状态才使用 `Value?`。在文档注释中说明管理责任、隔离、取消和错误（使用 `///`，按需补充 Parameters/Returns/Throws）。通过受控异步测试验证取消、actor 重入、被新请求取代的完成结果和任务清理。
-
-<a id="callback-and-delegate-adaptation"></a>
 
 ## 回调与委托适配
 

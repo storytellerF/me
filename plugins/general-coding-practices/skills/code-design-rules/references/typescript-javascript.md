@@ -1,5 +1,3 @@
-<a id="typescript-and-javascript"></a>
-
 # TypeScript 与 JavaScript
 
 - 使用 promise 和 `async`/`await`，明确由请求、组件或服务管理任务。promise 本身不是结构化任务作用域。`Promise.all` 拒绝时，既不会取消同级操作，也不会等待其清理；必须明确定义这些行为。
@@ -17,8 +15,6 @@ type LoadState<T> =
 ```
 
 TypeScript 使用可辨识联合类型和穷尽的 `switch`/`never` 检查。JavaScript 使用带标签的对象，并在边界验证必需字段；JSDoc 可以描述变体，但不会在运行时强制执行。通过已有 store、reducer 或管理者发布完整快照。用 JSDoc/TSDoc 记录取消和订阅约定。使用受控 promise 和模拟计时器验证，包括释放后才完成以及请求乱序的情况。
-
-<a id="callback-and-listener-adaptation"></a>
 
 ## 回调与监听器适配
 

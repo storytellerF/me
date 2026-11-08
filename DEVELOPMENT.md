@@ -1,8 +1,4 @@
-<a id="development"></a>
-
 # 开发
-
-<a id="report-sharing-controllers"></a>
 
 ## 报告分享控制器
 
@@ -36,8 +32,6 @@
 
 可直接通过 `python /path/to/plugin/scripts/<command>.py` 运行报告。跨平台自定义根目录使用重复 `--test-dir DIR`；`--test-dirs`、`TEST_RESULT_DIRS` 和 `REPORT_DIRS` 保留旧冒号分隔方式。升级旧收集缓存后使用全新输出目录。
 
-<a id="consuming-project-integration-rules"></a>
-
 ## 使用项目的集成规则
 
 协作 skill 定义共享独立性原则；文档 skill 将其应用到 README、DEVELOPMENT.md 和 AGENTS.md。每个面向项目的 skill 也包含简短领域边界，使独立安装不依赖通用插件。路由 agent 提示词与所属 skill 保持一致。
@@ -45,8 +39,6 @@
 审查时同时核对边界两侧：使用设备锁、模拟器、报告查看器或远程测试环境，不应向项目写入 AI 插件路径或参数；必需 Gradle 插件、Appium 扩展和报告库仍须声明。明确要求的 AI 插件集成，以及插件自身仓库，可以记录对应实现文档。先独立验证可移植 skill，再重新生成两个客户端，验证复制指令、清单、路由及包资源。不为此纯文档规则添加措辞匹配测试。
 
 文档维护语言优先遵循用户明确要求；修改已有文档时沿用其主要语言，新建时默认使用当前对话语言。保留多语言分工，翻译采用自然技术表达并保留条件、限制和要求强度。相应规则由 `project-docs-and-rules` 与文档维护 agent 共同维护。
-
-<a id="plugin-rule-audit"></a>
 
 ## 插件规则审计
 
@@ -88,15 +80,11 @@ python3 tests/test-validation-workflow.py
 
 同步 PR 标题包含源提交主题。`scripts/render-sync-pr.py` 使用共享 `scripts/templates/sync-pr.md.template` 渲染受影响插件版本（含移除）、生成差异统计、已完成客户端检查，以及源码和运行链接。工作流刷新已有 PR 的标题和正文。渲染器在生成同步提交后运行，与该提交父版本比较。
 
-<a id="code-design-skill-ownership"></a>
-
 ## 代码设计 skill 分工
 
 原 Kotlin 插件并入 `general-coding-practices`，其 `code-design-rules` 入口定义与语言无关的控制流、状态和并发不变量。单次回调适配器必须只结算一次并清理；重复监听器使用有明确管理者的流，规定缓冲和终止行为。
 
 原生 API、状态示例、取消差异、文档术语和平台测试指引放在 `references/`。入口链接各支持平台，插件 README 和平台元数据保持一致。Kotlin 插件及 skill 标识停用；生成市场清理旧包，并在两客户端加入新 skill。单独验证源 frontmatter，通过上述发行检查核对全部参考资源和原样复制的 Codex skill。提示词检查不证明应用或模型行为。
-
-<a id="continuous-integration"></a>
 
 ## 持续集成
 
@@ -115,8 +103,6 @@ Python、npm、uv、Go、Playwright Chromium 和 Docker 构建层使用 Actions 
 CI 变化时运行 `python tests/test-validation-workflow.py` 检查运行时套件覆盖。
 
 Shell 套件通过 `bash plugins/<plugin>/tests/test-*.sh` 逐文件运行；UI 套件在 UI 目录运行 `npm ci`、`npm run build` 和 `npm test`；浏览器及后端通过 `uv run --script <test.py>`。代理在 `plugins/qemu-guests/scripts/docker-proxy` 运行 `go test -race ./...`。容器作业需要 Docker 和 Linux 运行时，构建与执行命令见工作流步骤。
-
-<a id="shell-boundary-regression-tests"></a>
 
 ## Shell 边界回归测试
 
@@ -142,8 +128,6 @@ Shell 套件通过 `bash plugins/<plugin>/tests/test-*.sh` 逐文件运行；UI 
 
 Linux CI 保留这些运行时入口，Windows CI 也运行八个插件 Shell 边界套件。Git Bash 不能向原生 Windows Python 发送平滑信号，因此 AVD Unix 信号场景在 Windows 跳过，由已有原生配置套件验证 Ctrl+Break。`test-msys2-path.sh`、`test-linux-testcontainers.sh`、`test-container-runtime.sh`、报告插件小型 Shell 兼容检查及 Go、Node 测试保留各自平台和运行时约定。迁移 Shell 套件不需要真机、真实虚拟机或外部网络；启动器集成绑定私有回环端口并模拟 ngrok。
 
-<a id="device-lease-controller"></a>
-
 ## 设备租约控制器
 
 `android-device-lock/scripts/adb-device-lock.py` 管理宿主机租约操作。Shell 入口选择 Python 3.10+；`lock-metadata.py` 仍是可导入的严格元数据验证器，并保留兼容命令入口。设备修改继续通过远程 mkdir guard 串行执行。归属令牌在元数据发布前持久化，远程删除失败时保留。
@@ -153,8 +137,6 @@ Linux CI 保留这些运行时入口，Windows CI 也运行八个插件 Shell �
 命令管理使用带启动门的 Windows Job Object：包装器加入 job 后用户代码才开始。清理终止 job 并等待活动进程数为零。Unix 即使根进程已退出也向进程组发送信号。清理错误保留设备租约。原生控制器测试覆盖抗信号后代、正常根进程退出、清理失败及 Python、Bash shebang 参数转发，在 Linux 和 Windows CI 均运行。Windows job 语义遵循 [Job Objects API](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)。
 
 `command_tree.py` 管理各平台命令生命周期，`command-worker.py` 是带启动门的 Windows 入口。租约控制器只启动、等待并停止该管理者，确认清理后才释放。清理期间暂时屏蔽取消处理器，随后恢复。
-
-<a id="vm-lifecycle-and-state-controllers"></a>
 
 ## 虚拟机生命周期与状态控制器
 
@@ -196,23 +178,17 @@ Shell 归属使用调用者生成的令牌和预先安装、校验令牌的清�
 
 运行 `python plugins/qemu-guests/tests/test-vm-shell-handoff.py`，在私有状态上执行真实 CLI 到 Bash 测试。夹具解释器在元数据和输出边界注入取消、输出失败，以及发布后非零退出。独立屏障将创建停在发布前后；Shell trap 标记证明信号已交付，再允许创建者结束。测试覆盖两类资源、正常和自定义 trap、回滚与重试，以及已有未知归属保留。
 
-<a id="emulator-profile-controller"></a>
-
 ## 模拟器配置控制器
 
 `profile_controller.py` 负责字面配置解码、工具查找、参数映射和原子 INI 替换。配置保留在字典或 Shell 关联映射中，与继承进程环境分离。只向工具转发明确的 Android 路径和显示约定。`start-avd.py` 管理单 AVD guard 和模拟器进程。Shell 安装编排只使用内部 `profile`、`tool`、`args` 桥接模式，不使用 eval。AVD 路径解析和 INI 读写由原生启动控制器直接调用。Windows 原生等待有限，让 Ctrl+Break 能进入清理；只终止自有进程树。
 
 运行已有模拟 SDK、模拟器 Python Shell 边界套件及 `python plugins/android-emulator-profile/tests/test-profile-controller.py`。原生测试覆盖空格和 Unicode 路径、CRLF、拒绝展开、参数、重复键、原生锁、竞争、失败和取消，以及忽略继承配置与擦除权限、拒绝批处理末尾反斜杠。Windows 和 Unix 均运行原生套件。Git Bash 冒烟的 Windows 信号覆盖交由该原生测试。
 
-<a id="qemu-profile-configuration-boundary"></a>
-
 ## QEMU 配置边界
 
 共享 `lib/config.sh` 解析器先暂存字面值，再发布新的文件配置。固定支持键命名空间会清除继承或陈旧虚拟机设置，移除导出属性。Shell 使用者读取普通配置值，生命周期适配器显式接收配置路径。宿主工具、路径和解释器控制项留在配置命名空间外。Alpine ISO 默认值在配置加载后的使用时解析。客户机和测试环境仍只接收明确命令约定。
 
 `test-vm-state.py` 检查继承生命周期设置被忽略、必需值缺失、子环境隔离、连续加载和宿主设置保护。合成生命周期夹具在配置中设置就绪超时。
-
-<a id="scoped-command-ownership-and-report-publication"></a>
 
 ## 作用域命令管理与报告发布
 
@@ -227,8 +203,6 @@ Shell 归属使用调用者生成的令牌和预先安装、校验令牌的清�
 通用代码指引现优先修正资源归属、生命周期、状态和接口结构，再考虑补偿补丁，同时为崩溃、不确定外部效果和部分发布保留证据及明确恢复。
 
 Windows Android 工具环境在应用配置覆盖后，规范化三个 Android 目录变量。原生回归将含空格和 Unicode 的 Git Bash 路径直接传给 Python 子进程，覆盖继承值、配置覆盖、原生路径及空值。
-
-<a id="real-alpine-guest-acceptance"></a>
 
 ### 真实 Alpine 客户机验收
 

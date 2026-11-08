@@ -1,18 +1,12 @@
-<a id="android-emulator-profile-plugin"></a>
-
 # Android 模拟器配置插件
 
 本插件在本地及适合 Docker 的环境中，通过配置文件创建 Android Virtual Device 并启动模拟器。
 
 可以直接要求为 Android 运行或测试准备、启动模拟器，或查看状态和屏幕，无需指定配置文件或安装脚本。skill 检查设备和 API 要求，优先复用合适的模拟器或 AVD，再考虑新建。仅编辑 Android 代码不需要准备模拟器，状态查询保持只读。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 SDK 和 AVD 准备留在操作者环境。使用插件的项目保留标准 Android 工具要求和测试命令，不依赖 AI 插件安装或私有配置；正常 Android 构建插件仍受支持。
-
-<a id="included-tooling"></a>
 
 ## 包含的工具
 
@@ -26,8 +20,6 @@ SDK 和 AVD 准备留在操作者环境。使用插件的项目保留标准 Andr
 除非配置明确覆盖，启动时保留已有 `DISPLAY`。AVD 启动 guard 或原生锁被占用或处于中断状态时拒绝启动；关闭只针对自己启动的进程。手动恢复锁前，确认所有管理者已停止。新 AVD 可在首次启动前设置分区大小；调整已有或自定义 userdata 需要显式设置 `EMULATOR_ALLOW_DATA_WIPE=true`。此设置授权破坏性重置该 AVD，不应作为日常默认值。
 
 普通设备管理请参考当前 [Android CLI 指引](https://developer.android.com/studio/run/emulator-commandline)。随包脚本继续用于配置文件流程；核对已安装模拟器的参数，不假定每个 SDK 版本都支持相同选项。
-
-<a id="android-emulators-status-panel"></a>
 
 ## Android Emulators 状态面板
 
@@ -47,19 +39,13 @@ ADB 查找依次考虑 `ANDROID_ADB_COMMAND`、PATH、`ANDROID_HOME`、`ANDROID_
 
 原生呈现要求支持 MCP Apps 和 OpenAI 对话入口。这是本地 MCP 服务，不是已部署的远程 ChatGPT 应用。共享 UI 构建与验证见仓库中的 `scripts/android-status/README.md`。
 
-<a id="plugin-packaging"></a>
-
 ## 插件打包
 
 `plugin.json` 是可移植元数据的权威来源。客户端清单与完整 skill 资源会生成到 `me.claude` 和 `me.codex`，请从这两个仓库安装。源 skill 使用可移植的 frontmatter。Claude 路由按 skill 目录保存在 `extensions.com.anthropic.claude.skillFrontmatter` 中，仅注入生成的 Claude skill。Codex 的 skill 文件保持源文件原样复制。
 
-<a id="improvement-feedback"></a>
-
 ## 改进反馈
 
 插件问题向 [storytellerF/me issues](https://github.com/storytellerF/me/issues) 反馈。报告前，skill 要求检索已打开和已关闭的 issue，使用脱敏或合成示例，并遵循用户已有的发布授权。优先复用已有报告；无法访问时，保留尚未提交的草稿。
-
-<a id="python-profile-controller"></a>
 
 ## Python 配置控制器
 
@@ -75,8 +61,6 @@ ADB 查找依次考虑 `ANDROID_ADB_COMMAND`、PATH、`ANDROID_HOME`、`ANDROID_
 
 Git Bash 路径转换输出按 UTF-8 读取，不受 Windows ANSI 代码页影响，保证 Unicode SDK 和 AVD 目录名完整。
 
-<a id="development"></a>
-
 ## 开发
 
-离线回归套件及源码检出前提见[仓库开发文档](../../DEVELOPMENT.md#shell-boundary-regression-tests)。
+离线回归套件及源码检出前提见[仓库开发文档](../../DEVELOPMENT.md#shell-边界回归测试)。

@@ -1,8 +1,4 @@
-<a id="kotlin-and-android"></a>
-
 # Kotlin 与 Android
-
-<a id="native-terminology-and-choices"></a>
 
 ## 原生术语与技术选择
 
@@ -14,8 +10,6 @@
 - 将 `runBlocking` 限制在小型同步边界，例如 CLI 入口、旧系统集成或无法使用协程测试 API 的测试。说明为什么难以使用挂起接口；协程测试优先使用 `runTest`。
 - 映射失败时重新抛出 `CancellationException`，`runCatching` 也会捕获它。仅切换调度器并不能让任意阻塞调用支持取消。
 - 生命周期作用域限定任务存活时间，但不能阻止旧请求在新请求之后发布结果。在状态管理者提交结果时检查请求标识或代次。
-
-<a id="state-and-documentation"></a>
 
 ## 状态与文档
 
@@ -33,8 +27,6 @@ sealed interface LoadState<out T> {
 结果必须非空时使用 `Success<Result>`；仅当不存在结果也是合法成功时，才使用 `Success<Result?>`。通过已有状态管理者（例如 `StateFlow`）发布快照，不修改已发布快照背后的对象。
 
 只有能补充签名未表达的约定时，才使用 KDoc 链接以及 `@param`、`@return` 或 `@throws`。按需说明作用域和调度器的管理责任，以及 Flow 的收集语义。使用协程测试调度器和适当的单元或集成测试验证；Android 生命周期变更也可能需要 Android 测试。
-
-<a id="callback-and-listener-adaptation"></a>
 
 ## 回调与监听器适配
 

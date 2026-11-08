@@ -1,24 +1,16 @@
-<a id="summary"></a>
-
 ## 概要
 
 从 [{source_subject}]({source_url}) 同步生成的 **{client}** 包。
 
-<a id="affected-plugins"></a>
-
 ## 受影响插件
 
 {plugins}
-
-<a id="generated-changes"></a>
 
 ## 生成的变更
 
 ```text
 {diff_stat}
 ```
-
-<a id="validation"></a>
 
 ## 验证
 
@@ -27,8 +19,6 @@
 - 可移植源码和生成的 {client} 包验证。
 - 包生成与路由回归测试。
 - {client_validation}
-
-<a id="traceability"></a>
 
 ## 追溯信息
 

@@ -1,16 +1,10 @@
-<a id="diff-sharing-plugin"></a>
-
 # 代码差异分享插件
 
 生成优先使用 Difftastic 的可浏览 Git 差异站点，用于本地预览或用户要求的公开分享。`difft` 不可用时，Git 仍可作为回退渲染器。此 skill 用于差异报告或预览、分享 URL 请求；普通 Git 查看、代码审查和补丁编辑不需要报告服务。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 通过外部辅助工具和报告缓存分享，不向被比较项目的构建、CI 或文档添加 AI 插件脚本或安装路径。用户可以明确要求项目自有产物或持久集成；普通项目依赖保持不变。
-
-<a id="workflow"></a>
 
 ## 工作流程
 
@@ -38,8 +32,6 @@ skill 在预览或未明确受众时选择仅本地模式。公开分享必须�
 
 显式相对 `--output-dir` 和 `REPORT_OUTPUT_DIR` 以原调用目录解析，不改变调用者工作目录。
 
-<a id="configuration"></a>
-
 ## 配置
 
 
@@ -58,8 +50,6 @@ skill 在预览或未明确受众时选择仅本地模式。公开分享必须�
 | `DIFFTASTIC_PARSE_ERROR_LIMIT` | 文本回退前的解析错误数 | `100` |
 
 
-<a id="requirements"></a>
-
 ## 环境要求
 
 - 兼容 `.sh` 启动器需要 **Bash**；原生 Python 入口也可不依赖 Bash 运行。
@@ -68,13 +58,9 @@ skill 在预览或未明确受众时选择仅本地模式。公开分享必须�
 - **ngrok**：公开分享所需；否则使用本地服务 URL。
 - **Python 3.10+**：全部报告和预览命令所需。Shell 入口依次检查 `python3`、`python`，`PYTHON_COMMAND` 可覆盖解释器选择。
 
-<a id="license"></a>
-
 ## 许可证
 
 本插件属于 me 插件集合。
-
-<a id="plugin-packaging"></a>
 
 ## 插件打包
 
@@ -83,8 +69,6 @@ skill 在预览或未明确受众时选择仅本地模式。公开分享必须�
 ## 快照发布
 
 每次成功生成都会发布完整快照。构建失败时旧报告仍可访问，已打开页面保留原资源。启动器 URL 打开最新快照。旧代次继续保留；只有服务和读取者均结束后，才移除专用报告缓存。无效比较引用明确失败，不替换为其他历史。Difftastic 已安装但渲染失败时，页面选择可用的 Git diff。
-
-<a id="improvement-feedback"></a>
 
 ## 改进反馈
 

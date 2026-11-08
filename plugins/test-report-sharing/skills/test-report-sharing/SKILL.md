@@ -3,19 +3,13 @@ name: test-report-sharing
 description: 将已有测试报告收集为可浏览站点、预览报告或分享报告 URL 时使用。支持 Gradle、Maven 等工具的 JUnit XML 和 HTML 输出。不因运行测试或分析失败就触发。
 ---
 
-<a id="test-report-sharing"></a>
-
 # 测试报告分享
 
 报告请求使用已有测试输出。除非用户同时要求，否则运行测试、诊断失败或修改报告生成流程属于独立任务。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 读取项目已有 JUnit、XML 和 HTML 输出，不让构建或测试调用本 AI 插件的收集、查看或隧道脚本。辅助工具路径、凭据、分享配置和服务状态留在项目外，默认使用报告缓存。标准测试报告或覆盖率 Gradle 插件仍是正常项目依赖。保留用户指定的输出位置；添加项目自有报告生成或持久分享集成必须在请求范围内。
-
-<a id="required-behavior"></a>
 
 ## 必需行为
 
@@ -27,13 +21,9 @@ description: 将已有测试报告收集为可浏览站点、预览报告或分�
 - 返回实际公开或本地 URL 和报告数量；未收集到报告不代表测试通过。
 - 从已安装插件根目录定位脚本，在目标项目中通过绝对路径运行；快速示例的相对路径用于源码检出目录。
 
-<a id="runtime"></a>
-
 ## 运行时
 
 全部控制逻辑使用 Python 3.10+ 标准库。已有 `.sh` 是轻量启动入口，每个都有同名 `.py` 供原生直接执行。全流程使用相同 `--project-dir`。显式相对输出路径以原调用目录解析，不改变调用者工作目录。运行时不依赖 GNU 文本工具或 jq。
-
-<a id="quick-start"></a>
 
 ## 快速开始
 
@@ -50,8 +40,6 @@ plugins/test-report-sharing/scripts/generate-report-site.sh
 plugins/test-report-sharing/scripts/start-ngrok.sh --local-only
 ```
 
-<a id="configuration"></a>
-
 ## 配置
 
 - `--project-dir DIR`：每个命令的项目目录，默认当前目录。
@@ -62,19 +50,13 @@ plugins/test-report-sharing/scripts/start-ngrok.sh --local-only
 - `PYTHON_COMMAND`：每个命令使用的明确可用 Python 3.10+ 可执行文件；否则依次尝试 `python3`、`python`。
 - `start-ngrok.sh --local-only`：回环地址预览，不尝试公开隧道。
 
-<a id="supported-input-formats"></a>
-
 ## 支持的输入格式
-
-<a id="reports"></a>
 
 ### 报告
 
 - JUnit XML 报告（`*-tests.xml`、`TEST-*.xml`）。
 - HTML 测试报告（测试输出目录中的 `*.html`）。
 - Gradle、Maven 测试输出目录（`build/reports/`）。
-
-<a id="bundled-resources"></a>
 
 ## 随包资源
 
@@ -83,8 +65,6 @@ plugins/test-report-sharing/scripts/start-ngrok.sh --local-only
 - `scripts/start-ngrok.sh`：提供本地预览或启动公开 ngrok 隧道。
 - `templates/report-site.html`：基于占位符的报告索引模板。
 - `templates/style.css`：报告索引样式表。
-
-<a id="failure-handling"></a>
 
 ## 失败处理
 
@@ -98,8 +78,6 @@ plugins/test-report-sharing/scripts/start-ngrok.sh --local-only
 每次收集发布包含站点的完整替换快照。重复收集不会让当前视图重复报告；源报告删除后，下一快照不再包含它。收集失败保留旧版本。启动器 URL 打开最新快照，已打开页面保留原资源。旧代次继续保留，因此只有服务和读取者结束后，才移除专用报告缓存。
 
 链接资源在发布时复制并物化到每个快照，后续源变化不改变已打开报告。目录循环会使收集失败，复制失败保留上次发布；不保留指向源的实时链接。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

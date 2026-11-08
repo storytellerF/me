@@ -1,5 +1,3 @@
-<a id="manual-lock-lifecycle"></a>
-
 # 手动锁生命周期
 
 设备操作跨越多个命令时，从 agent 管理的 Shell 会话手动获取锁。按 `SKILL.md` 将 `DEVICE_LOCK_PLUGIN_ROOT` 解析为已安装插件的绝对根路径；项目测试运行器和 CI 保持不变。从项目目录运行现有测试命令，令牌文件放在系统临时目录。

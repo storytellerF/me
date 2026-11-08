@@ -3,17 +3,11 @@ name: android-recyclerview-best-practice
 description: 实现、调试、审查或重构 Android RecyclerView 列表时使用，涵盖 adapter 更新、行状态、回收、分页、生命周期和性能。
 ---
 
-<a id="android-recyclerview-best-practice"></a>
-
 # Android RecyclerView 最佳实践
-
-<a id="project-independence"></a>
 
 ## 使用项目的独立性
 
 使用项目自身的 adapter、状态代码及正常 AndroidX RecyclerView、Paging 依赖。不要将本 AI 插件作为构建或运行前提，不向项目复制其安装路径，也不在项目文档中要求调用其 skill。Android Gradle、编译器插件和其他必需库仍是合法项目依赖。
-
-<a id="core-decision"></a>
 
 ## 核心选择
 
@@ -24,8 +18,6 @@ description: 实现、调试、审查或重构 Android RecyclerView 列表时使
 3. 需要自定义 adapter 基类，但数据仍是列表时，使用 `RecyclerView.Adapter<VH>` 配合 `AsyncListDiffer<T>`。
 4. 只有更新操作无法适配 `ListAdapter`、`PagingDataAdapter` 或 `AsyncListDiffer` 时，才手动使用 `DiffUtil.calculateDiff`。
 5. 避免 `notifyDataSetChanged()`。只有确属命令式、规模很小且不涉及列表的数据状态变更，才使用精确 adapter 通知；局部绑定优先使用 payload。
-
-<a id="diff-rules"></a>
 
 ## 差异计算规则
 
@@ -52,8 +44,6 @@ object ItemDiff : DiffUtil.ItemCallback<ItemUiModel>() {
 - 使用不可变 UI 模型，让相等判断有意义。
 - 除非列表确实静态，否则绝不使用 adapter 位置、对象引用或列表下标作为标识。
 - 通过 `setHasStableIds(true)` 启用稳定 ID 时，`getItemId()` 必须与 `areItemsTheSame` 使用的标识一致。
-
-<a id="adapter-patterns"></a>
 
 ## Adapter 模式
 
@@ -103,8 +93,6 @@ viewLifecycleOwner.lifecycleScope.launch {
 - 页面级加载、空状态和错误状态观察 `adapter.loadStateFlow`。
 - 不在 adapter 内混用 Paging 快照与手动可变列表。
 
-<a id="viewholder-rules"></a>
-
 ## ViewHolder 规则
 
 - 使用传给 `bind` 的条目绑定，不依赖保存的 adapter 位置。
@@ -114,8 +102,6 @@ viewLifecycleOwner.lifecycleScope.launch {
 - 格式化和昂贵计算放在 `onBindViewHolder` 外；在 UI 模型中预计算或使用缓存格式化器。
 - `ViewHolder` 不持有 `Fragment`、`Activity`、`ViewModel` 或长生命周期作用域的引用。
 
-<a id="fragment-and-lifecycle"></a>
-
 ## Fragment 与生命周期
 
 - 每个视图生命周期只创建一次 adapter，通常在 `onViewCreated`。
@@ -123,8 +109,6 @@ viewLifecycleOwner.lifecycleScope.launch {
 - 通过 `viewLifecycleOwner.repeatOnLifecycle` 收集 flow。
 - 提交不可变列表；传给 `submitList` 后不再修改。
 - 条目回调经 UI 适配层进入独立于框架的 Host。导航和其他副作用留在 Host 副作用通道，由视图呈现。
-
-<a id="layout-and-performance"></a>
 
 ## 布局与性能
 
@@ -135,16 +119,12 @@ viewLifecycleOwner.lifecycleScope.launch {
 - 嵌套 RecyclerView 使用共享 `RecycledViewPool`、稳定的子 adapter，以及经测量确定的预取设置。
 - 避免嵌套滚动冲突；复合页面优先用单个多视图类型 RecyclerView 或 `ConcatAdapter`。
 
-<a id="ui-state"></a>
-
 ## UI 状态
 
 - 页面状态放在 adapter 外：加载、空、内容、错误、离线和刷新。
 - 用稳定 ID 表示行状态，不用位置。
 - 选中、展开、滑动状态和待执行操作由独立于框架的 Host 管理，再映射到不可变 UI 模型。ViewModel 可将 Host 生命周期和状态适配到 Android。
 - 不让回收视图携带旧视觉状态。同一条目每次绑定都应得到相同行表现。
-
-<a id="multiple-view-types"></a>
 
 ## 多视图类型
 
@@ -153,16 +133,12 @@ viewLifecycleOwner.lifecycleScope.launch {
 - 通过稳定 ID 加行类型判断差异；不把不同类型的行视为同一条目。
 - 各区段的管理责任、加载状态或更新节奏独立时，页眉、内容、空行和页脚使用 `ConcatAdapter`。
 
-<a id="testing-guidance"></a>
-
 ## 测试指引
 
 - 单元测试自定义 `DiffUtil.ItemCallback` 的标识、内容相等和 payload 行为。
 - Host 列表映射与 adapter 渲染分别测试。
 - Paging 测试 `PagingData` 转换和加载状态处理。
 - 只有变更影响行布局、选中、空或错误状态、加载状态呈现时，才添加 UI 或截图测试。
-
-<a id="implementation-style"></a>
 
 ## 实现风格
 
@@ -171,8 +147,6 @@ viewLifecycleOwner.lifecycleScope.launch {
 - adapter API 保持小型：通过 `submitList` 或 `submitData` 输入数据，通过回调输出事件。
 - 不要仅为改进 RecyclerView 就引入新架构框架。
 - 重构先保持行为等价，再改进差异计算、状态和生命周期安全。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

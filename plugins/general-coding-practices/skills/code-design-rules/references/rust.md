@@ -1,5 +1,3 @@
-<a id="rust-and-async-runtimes"></a>
-
 # Rust 与异步运行时
 
 - 复用项目的异步运行时。管理派生任务并观察其结果；丢弃 Tokio `JoinHandle` 会让任务脱离管理，而非取消任务。适当使用任务集合和项目的关闭机制。
@@ -18,8 +16,6 @@ enum LoadState<T, E> {
 ```
 
 使用穷尽的 `match`。仅当缺失值合法时，才在 `Success` 内使用 `Option<T>`；不要靠 `unwrap` 补救无效的状态模型。使用 rustdoc（`///`）说明所有权、取消安全性、panic 和错误行为，以及运行时要求。使用运行时支持的测试控制机制，验证关闭、future 被丢弃时的行为、所管理任务的完成和被取代的结果。
-
-<a id="callback-and-listener-adaptation"></a>
 
 ## 回调与监听器适配
 

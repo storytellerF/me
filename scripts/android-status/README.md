@@ -1,5 +1,3 @@
-<a id="android-status-panel-sources"></a>
-
 # Android 状态面板源码
 
 本目录维护模拟器和设备锁插件共用的 MCP Apps UI 及 ADB 读取工具。各插件仍可独立安装：`npm run build` 为每个所属插件写入自包含 HTML 资源及 `android_probe.py` 副本。在此修改共享源码后重新生成，不直接编辑生成文件。每个插件自行维护收集器和 stdio MCP 服务。

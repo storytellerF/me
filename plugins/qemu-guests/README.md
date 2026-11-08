@@ -1,5 +1,3 @@
-<a id="qemu-guests"></a>
-
 # QEMU 客户机
 
 需要运行桌面应用测试、在不同于当前宿主机的环境测试，或准备 Docker 测试环境（含 Testcontainers）时，使用本 skill。请求可以直接描述测试目标，例如“运行桌面测试”“从这台 Windows 宿主机测试应用的 Linux 版本”或“为集成测试准备 Docker”，无需点名 QEMU、Appium 或安装流程。
@@ -12,13 +10,9 @@ skill 在内部选择、协调所需环境，优先复用合适的已有配置�
 
 普通 Linux 宿主机上的纯 Docker 流程直接使用 Docker。安装了 QEMU 和 Python 的 Linux 宿主机也可运行工作客户机监督器。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 使用插件的项目通过标准 Docker、Appium 端点及可移植产物和服务配置工作，不依赖本 AI 插件启动器安装路径或私有虚拟机配置。正常 Appium 驱动或扩展、Gradle 插件和其他必要项目依赖仍是应记录的前提；操作者配置留在项目外。
-
-<a id="concurrent-work-vms"></a>
 
 ## 并发工作虚拟机
 
@@ -47,7 +41,7 @@ python scripts/whpx_runtime.py
 
 使用 QEMU 11.1.2 及 `qemu_args: ["-accel", "whpx", "-cpu", "Westmere,-vmx,-svm"]` 时，四 vCPU 冷启动成功。未经修改的程序在客户机发起热重启时仍以 `Unexpected VP exit code 4` 失败。改为 Q35、UEFI 或屏蔽 x2APIC 没有解决实测故障。仅升级 QEMU 不足以证明兼容。
 
-随包 [WHPX 分区重置补丁](patches/qemu-11.1.2-whpx-partition-reset.patch)改编自[上游提案](https://patchew.org/QEMU/20260421205749.55060-1-mohamed@unpredictable.fr/)，不属于原版发行。Windows 11 上四 vCPU Windows Server 2025 热重启通过；当前 Appium 模式也通过宿主机运行的桌面 E2E 场景。重启验收在每次重启后，于已有周期超时内等待认证后的 Appium 就绪；只有 SSH 就绪不够。见[构建与验证](DEVELOPMENT.md#whpx-four-vcpu-windows-reboots)。重置 API 要求 x64 Windows 11；Windows 10 和修补后的 UEFI 安装未验证。
+随包 [WHPX 分区重置补丁](patches/qemu-11.1.2-whpx-partition-reset.patch)改编自[上游提案](https://patchew.org/QEMU/20260421205749.55060-1-mohamed@unpredictable.fr/)，不属于原版发行。Windows 11 上四 vCPU Windows Server 2025 热重启通过；当前 Appium 模式也通过宿主机运行的桌面 E2E 场景。重启验收在每次重启后，于已有周期超时内等待认证后的 Appium 就绪；只有 SSH 就绪不够。见[构建与验证](DEVELOPMENT.md#whpx-四-vcpu-windows-重启)。重置 API 要求 x64 Windows 11；Windows 10 和修补后的 UEFI 安装未验证。
 
 受管运行时还包含 [CET/XSAVE 能力修正](patches/qemu-11.1.2-whpx-cet-xsave.patch)。WHPX 宿主默认值不能启用所选客户机 CPU 模型排除或其 XSAVE/XSAVES 状态路径不支持的 CET 特性，避免向早于 XSAVE 的 Westmere 模型暴露影子栈。补丁变化选择新缓存，不触碰已有虚拟机进程和磁盘。
 
@@ -58,8 +52,6 @@ python scripts/whpx_runtime.py
 仅旧系统运行时配置可通过 `install_reboots: 4` 显式允许 Windows 安装期间最多四次冷启动。QEMU 退出而不内部重置；验收前干净退出后，监督器以同一磁盘、seed 和加速器再次启动，优先磁盘而非安装介质。崩溃、停止请求、预算耗尽或原就绪截止时间到达会结束此流程。验收检查 bootstrap 和 Appium 就绪。受管运行时直接支持热重启，拒绝此选项。
 
 每台工作虚拟机有独立 `state_dir`、qcow2 磁盘、监督租约和宿主 SSH 端口，可同时运行多台。分配不同宿主 SSH 端口，并与 Alpine 宿主转发不重叠。工作客户机不要求 Alpine，也不接收 Docker 代理、后端凭据或容器端口隧道。
-
-<a id="unified-test-environment-entry-point"></a>
 
 ### 统一测试环境入口
 
@@ -86,8 +78,6 @@ Linux 操作者将 `TEST_ENV_LINUX_RUNTIME` 指向私有 JSON，含绝对 POSIX 
 
 按下文项目需求初始化隔离图形 Appium 会话。已有准备或自定义运行时，操作者在调用统一入口前提供所需 Linux 驱动、D-Bus、AT-SPI 和已解锁测试密钥环。中继将宿主路径及 JVM classpath 分隔符映射到专用 POSIX 镜像，转发声明的宿主服务，将输出收回原宿主路径。Windows 和 Linux 测试环境 JSON 使用同一 `java-argfile` schema，由客户机配置选择传输。项目只声明正常平台、产物和服务要求，不向使用插件的项目添加操作者清单路径或环境提供方指引。
 
-<a id="automatic-desktop-runtime-initialization"></a>
-
 ### 自动桌面运行时初始化
 
 项目可在环境 JSON 旁保留可移植 `version: 1` 桌面需求，由环境的 `requirements` 字段选择。需求文件含 `desktop` 宽高和 `platforms` 映射（`Windows`、`Linux`）：Java 主版本、Appium 服务版本、驱动和插件名称到版本的映射、可选 Linux 运行 `packages`、必需环境变量名及预构建 Maven `classpath` 坐标。不含虚拟机配置路径、SSH 密钥、加速器选择或 AI 插件入口。正常 Appium 扩展源码、依赖和运行需求归项目管理；预构建包与平台连接归操作者管理。
@@ -101,8 +91,6 @@ Ubuntu seed 只携带小型 cloud-init 文本，从只读 seed 介质解包离�
 新受管客户机先验证 SSH 转发监听器归监督 QEMU 所有，再将 SSH 主机密钥固定在状态目录 `known_hosts`。后续传输和 Appium 连接使用该固定值。就绪轮询 cloud-init 状态不使用 `--wait`，遗弃 SSH 探测不能留下占内存的 cloud-init 等待者。Java、运行时检查及真实项目 E2E 与 Appium 服务就绪分别判断。
 
 这样初始化的 Linux 客户机自动提供已有 `/usr/bin/java` 和随包原生 classpath 元数据。`TEST_ENV_LINUX_RUNTIME` 仍可作为已有准备或自定义环境的私有覆盖。统一宿主入口在测试前，将初始化指纹与项目需求核对。
-
-<a id="project-setup-hooks"></a>
 
 ### 项目配置钩子
 
@@ -123,15 +111,11 @@ Ubuntu seed 只携带小型 cloud-init 文本，从只读 seed 介质解包离�
 
 客户机钩子授权运行配置和预构建依赖安装，不授权客户机内编译。编译器和构建任务留在宿主钩子。执行前审查项目脚本，原始钩子日志私有保留，非零退出或超时即停止初始化。项目需求和客户机脚本只读取一次，形成不可变初始化快照。即使安装期间源文件被修改或删除，预检、seed 生成和记录的指纹都使用该快照；变更在下一次捕获生效。客户机脚本指纹包含有序文件标识及各自内容摘要；在脚本之间移动内容也会使初始化失效。指纹 v2 之前记录的客户机钩子环境，需要新的隔离初始化。已有 v2 输入不变时仍兼容；无客户机钩子的配置保留原指纹。已有虚拟机状态不自动重写。通用引擎不得含使用插件的项目包名、路径或测试命令。
 
-<a id="cancellation-and-cleanup"></a>
-
 ### 取消与清理
 
 配置式本地、纯 Docker 和客户机 Appium 运行遵循同一清理、取消行为。信号记录第一次取消请求，执行在显式检查点响应，不在任意指令中被打断。命令和 SSH 等待短间隔检查请求，启动 HTTP 就绪仍受 10 秒超时限制。清理开始后，后续信号不能中断清理或替换结果。已接受取消即使清理失败也保留信号退出码；干净执行保留宿主命令退出码，普通清理失败返回 1。不为发布结果重启命令或清理。即使 HTTP 将异常转换为错误响应，或后续重试成功，worker 清理失败仍保留。
 
 主线程确认资源 worker 完成并收集报告后，才决定是否释放测试租约。CLI 只报告固定清理类别和数量，不含异常文本、参数、路径或凭据。客户机清理不确定时保留桌面测试租约并输出手动恢复提示；本地和纯 Docker 不获取客户机桌面租约。完全确认清理后释放租约，不输出清理警告。
-
-<a id="uncertain-appium-creation"></a>
 
 ### Appium 创建结果不确定
 
@@ -141,13 +125,9 @@ SSH 传输即使某个停止失败，也尝试停止每条自有隧道，随后�
 
 不要自动删除租约后重试：检查该客户机 Appium 会话、进程和私有测试诊断，确认相关应用、会话已停止，再只显式恢复该次运行租约。绝不批量删除无关 Appium 会话。已确认协议拒绝及远程请求前失败可普通清理。默认回归套件不启动 QEMU；原生多虚拟机冒烟要求显式 `QEMU_TEST_ACCEL` 启用，并另行运行。
 
-<a id="build-and-test-placement"></a>
-
 ### 构建与测试位置
 
 工作虚拟机是运行和测试环境。除非用户明确要求客户机编译，否则应用、测试代码、原生依赖和安装钩子应在宿主机或已有指定构建环境编译，再传输构建产物与预构建依赖。安装客户机、配置 Appium 或运行测试不授权在工作虚拟机编译。不能悄悄回退客户机编译或扩充 CPU、内存容纳构建；应解决宿主构建前提或报告限制。工作虚拟机运行 Appium、应用和测试，普通运行时 JIT 不属于构建。
-
-<a id="provision-and-run"></a>
 
 ### 安装与运行
 
@@ -196,8 +176,6 @@ macOS 桌面自动化需要项目要求的 Mac2 驱动和兼容完整 Xcode，�
 
 seed 含生成的客户机账户凭据和 SSH 授权。包括 Windows 在内，状态目录保持私有，位于仓库及共享文件夹外。绝不发布 seed、应答文件或载荷归档。安装拒绝替换已有磁盘和 seed。中断安装用 `run` 继续，介质保留挂载直到验收成功；通过验收的客户机不带安装介质启动。
 
-<a id="graphical-systems-and-live-screens"></a>
-
 ### 图形系统与实时屏幕
 
 `graphical` 设置为 JSON 布尔值。Ubuntu 默认 `false`，Windows、macOS 默认 `true`。图形客户机需要唯一宿主 `qmp_port`，与 SSH、后端和其他客户机端口分开。QMP 仅绑定 `127.0.0.1`。面板不暴露 monitor，也不接受键盘、鼠标输入。
@@ -212,8 +190,6 @@ seed 含生成的客户机账户凭据和 SSH 授权。包括 Windows 在内，�
 按所选 DPI 下套件最大窗口设置桌面尺寸。基础 macOS 帧缓冲可能只暴露启动选定模式：配置私有 OpenCore `UEFI -> Output -> Resolution`（如支持时的 `1920x1080`），重启并在测试前验证实际模式。保留原固件和配置。macOS 关机 SSH 断开可能先于内核停止；等待客户机关机，再强制退出自有 QEMU。
 
 启动或安装在 `~/.qemu-guests/registry` 注册公开状态元数据。停止的虚拟机仍保留。面板区分启动中、就绪、停止中、已停止、未知和需要恢复，孤儿进程不报告就绪。选择 **View screen** 切换图形客户机，可见时约每两秒刷新。捕获失败保留上一帧并明确显示错误，普通状态快照不含截图。运行时捕获文件临时使用，每次请求后删除。屏幕工具只接受已注册客户机 ID，并验证进程身份和回环 QMP 监听器归属。
-
-<a id="unattended-intel-macos-installation"></a>
 
 ### Intel macOS 无人值守安装
 
@@ -232,8 +208,6 @@ bootstrap product package 安装到运行目标时显式加载首次启动服务
 
 准备需要 Apple 工具 `createinstallmedia`、`pkgbuild`、`productbuild`、`hdiutil`。Windows、Linux 运行时可使用生成的 ISO 和包，不能用替代工具构建。安装器版本、固件和启动布局必须匹配；交接中断后保留未完成磁盘，检查 `macos-install.json`。不自动擦除部分安装客户机。随包渲染及控制测试不能代替所选 macOS 版本安装测试。
 
-<a id="windows-host-ubuntu-gpu-runtime"></a>
-
 ### Windows 宿主机上的 Ubuntu GPU 运行时
 
 Windows 11 x64 上，`profiles/ubuntu-virgl-whpx.json` 可选择 `qemu_runtime: "virgl-whpx"` 加速 Ubuntu OpenGL。受管运行时使用随包补丁构建固定版本 QEMU 11.1.2 和 VirGLrenderer 1.3.0，验证可执行文件、固件及 DLL，保持系统 QEMU 不变。需要 Python 3.12+、MSYS2 UCRT64、WHPX，以及已登录且原生 OpenGL 驱动可用的 Windows 桌面。隐藏 SDL 仍需要该桌面；宿主注销、会话 0 和宿主开机自动启动未验证。
@@ -248,9 +222,7 @@ python scripts/guest-vm.py run /private/ubuntu-gpu.json
 
 首次安装自动添加 Ubuntu 二进制 Mesa 诊断工具，通过 LightDM/XFCE 在 Xorg 启动测试会话，设置所需显示尺寸，在 Appium 启动前检查硬件 VirGL。测试 D-Bus、AT-SPI 及已解锁原生密钥环保持隔离。控制台桌面专用于这些测试，人工使用不能与活动测试竞争。普通 Ubuntu 配置保留已有 Xvfb 会话。不允许把已有软件渲染磁盘切换到该运行时，应初始化新状态目录。应用和原生依赖在宿主机或指定构建机器准备，不在工作客户机编译。
 
-此路径加速 OpenGL。CUDA、Vulkan、视频解码和任意宿主 GPU 未验证。受管运行时按需读取当前 GPU 扫描输出，生成私有图像，支持状态面板 QMP 捕获。Appium 截图继续使用应用正常驱动。就绪检查验证当前启动和会话；实际渲染、截图和业务 E2E 验收仍是独立检查。重建和验证见[开发说明](DEVELOPMENT.md#ubuntu-virglwhpx-runtime)。
-
-<a id="windows-macos-gpu-runtime"></a>
+此路径加速 OpenGL。CUDA、Vulkan、视频解码和任意宿主 GPU 未验证。受管运行时按需读取当前 GPU 扫描输出，生成私有图像，支持状态面板 QMP 捕获。Appium 截图继续使用应用正常驱动。就绪检查验证当前启动和会话；实际渲染、截图和业务 E2E 验收仍是独立检查。重建和验证见[开发说明](DEVELOPMENT.md#ubuntu-virglwhpx-运行时)。
 
 ### Windows 上的 macOS GPU 运行时
 
@@ -284,8 +256,6 @@ uv run scripts/prepare-macos-gpu-boot.py --opencore C:/private/OpenCore.raw --ou
 
 安装后完成下方已准备桌面恢复流程，确认实际 GPU 输出，再运行未经修改的项目测试。运行时缓存、启动镜像和私有配置留在使用插件的项目外。
 
-<a id="prepared-macos-desktop-recovery"></a>
-
 ### 已准备 macOS 桌面的恢复
 
 无人值守安装或明确选择的升级后，使用 `scripts/macos-desktop.py reconcile /private/guest.json --plan /private/desktop.json`。以 `profiles/macos-desktop.json` 为私有清单起点，固定已测试 OS 构建、应用 bundle 标识和 CDHash，保留私有 bootstrap 载荷 ZIP 作为凭据来源。未知构建和签名会失败。使用已安装 Pillow 的 Python 3.10+，以及客户机配置选定的宿主 Tesseract。
@@ -314,8 +284,6 @@ uv run scripts/prepare-macos-gpu-boot.py --opencore C:/private/OpenCore.raw --ou
 
 已准备介质、固件及兼容清单仍是前提；此命令不选择或下载任意未来 macOS 版本。配置所提供固件自动启动已安装卷；桌面权限控制器无法恢复停在交互启动选择器的虚拟机。
 
-<a id="custom-unattended-adapters"></a>
-
 ### 自定义无人值守适配器
 
 `os: custom` 接受用户提供的其他系统无人值守安装器。macOS 现已有上方内置流程。
@@ -328,8 +296,6 @@ uv run scripts/prepare-macos-gpu-boot.py --opencore C:/private/OpenCore.raw --ou
 - `timeout` 限制就绪秒数，默认 3600。失败保留安装磁盘和 seed。OS 或介质变化要求新状态目录。创建磁盘前检查 `media_sha256`。
 
 厂商格式参考：[Ubuntu NoCloud](https://canonical-cloud-init.readthedocs-hosted.com/en/latest/reference/datasources/nocloud.html)、[Windows 无人值守安装](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/automate-windows-setup)。Apple 的 [Virtualization framework 安装器](https://developer.apple.com/documentation/virtualization/installing-macos-on-a-virtual-machine)是独立平台流程，不是此处随包提供的 QEMU 安装器。
-
-<a id="alpine-docker-backend-architecture"></a>
 
 ## Alpine Docker 后端架构
 
@@ -349,8 +315,6 @@ uv run scripts/prepare-macos-gpu-boot.py --opencore C:/private/OpenCore.raw --ou
 - Testcontainers Ryuk 保持启用，使用 guest Docker socket。
 
 宿主 bind mount 不能直接由远程 guest daemon 使用。测试需要宿主文件时，使用 Docker build context 或命名卷。
-
-<a id="docker-commands-from-windows-or-the-outer-linux-container-over-ssh"></a>
 
 ### Windows 或外层 Linux 容器通过 SSH 执行 Docker 命令
 
@@ -375,8 +339,6 @@ Wrapper 将代理加入 PATH，因此 `docker build` 使用 Docker 上游 ignore
 
 脚本通过 SSH 将 tar 流发送到暂存目录，仅在传输成功后替换目标，旧副本保留为 `<destination>.previous`。默认排除 `.git`、`target`、`node_modules`、`dist` 和 `.env`，可通过 `--exclude <pattern>` 添加项目专用排除项。它有意不构建或测试项目。
 
-<a id="prerequisites"></a>
-
 ## 前提条件
 
 在 Linux Bash 或 Windows Git Bash/MSYS2 中运行脚本，需要：
@@ -389,8 +351,6 @@ Wrapper 将代理加入 PATH，因此 `docker build` 使用 Docker 上游 ignore
 - 首次安装 Go 和下载依赖时，需要运行中的 Alpine VM 且可访问软件仓库。
 
 Windows 上，已知 MSYS2 工具目录和 Windows OpenSSH 作为回退追加到 `PATH`。已有命令优先，包括启动脚本所用 Bash runtime。这样可使用 MSYS2 `xorriso`，同时不替换 Git Bash 工具。
-
-<a id="first-time-provisioning"></a>
 
 ## 首次环境准备
 
@@ -408,8 +368,6 @@ Windows 上，已知 MSYS2 工具目录和 Windows OpenSSH 作为回退追加到
 ```
 
 若希望初始验证时拉取少量镜像，在 profile 中将 `PRELOAD_IMAGES` 设置为逗号分隔列表。镜像引用可包含 registry 路径、tag、digest、点、连字符和下划线。普通 Testcontainers 拉取会自动缓存在持久磁盘。
-
-<a id="daily-use"></a>
 
 ## 日常使用
 
@@ -440,8 +398,6 @@ Wrapper 在两个平台都向测试进程提供 `DOCKER_HOST`、`TESTCONTAINERS_
 ./scripts/stop-vm.sh ./profiles/dev.profile
 ```
 
-<a id="profile-settings"></a>
-
 ## 配置项
 
 - `VM_NAME`、`VM_MEMORY`、`VM_CPUS`、`VM_DISK_SIZE`。
@@ -470,8 +426,6 @@ Linux helper 为 listener 继承足够文件描述符，另留 256 个用于连�
 
 已有持久 guest 不自动迁移。能安全更新 guest 前，保留其明确 profile 范围。只改宿主 profile 不会改变 Docker 缓存范围，启动会拒绝持久池不匹配。在计划维护窗口，更新 `/etc/sysctl.d/99-testcontainers-ports.conf`，安装新渲染的 wrapper 和 `/etc/conf.d/docker` 配置，使用相同数字池，再重启 Docker 和 QEMU。更新时保留自定义 Docker 服务设置。重启 Docker 会中断容器，先确认归属。运行中 VM 绝不会为应用默认值而重启。
 
-<a id="measured-resource-reference"></a>
-
 ## 实测资源参考
 
 Windows 代理遵循 Docker 的 Windows 归档权限：添加执行位，移除组和其他用户写权限，使脚本无需 Dockerfile 变通即可在 Linux 镜像运行。Linux 容器中保留源文件权限位，脚本必须已具备所需执行位。
@@ -486,13 +440,9 @@ Windows 代理遵循 Docker 的 Windows 归档权限：添加执行位，移除�
 
 宿主和 QEMU CPU 百分比按所有宿主逻辑处理器归一，guest 按四个 vCPU 归一。QEMU 和 guest CPU 平均值不包含最初计数基线。Guest 经 SSH 采样，因此包含少量测量开销。宿主全局内存反映测量机上无关应用的占用；为此 VM 规划资源时，参考 QEMU 工作集和 guest 指标。
 
-<a id="validation"></a>
-
 ## 验证
 
-贡献者测试命令和离线回归清单见 [DEVELOPMENT.md](DEVELOPMENT.md#offline-shell-boundary-regressions)。
-
-<a id="vm--containers-status-panel"></a>
+贡献者测试命令和离线回归清单见 [DEVELOPMENT.md](DEVELOPMENT.md#离线-shell-边界回归)。
 
 ## VM 与容器状态面板
 
@@ -510,8 +460,6 @@ Windows 代理遵循 Docker 的 Windows 归档权限：添加执行位，移除�
 
 资源在刷新时采样，独立于测试 wrapper 的 Windows metrics 报告。Guest 采样通过回环 SSH 和已有 VM key 读取 `/proc/stat` 与 `/proc/meminfo`，不安装工具、创建密钥或写状态。本地宿主和进程采样使用 MCP runtime 固定的 psutil 依赖。普通 Python 执行 `scripts/status.py` 时，这两个范围需要 psutil。权限不足、SSH 失败、进程停止或缺少 CPU 基线都显示不可用，不显示零。容器采样失败不隐藏容器列表。为限定刷新工作，每份快照最多采样 32 个运行容器，并发八次探测，其余标为不可用。
 
-<a id="local-mcp-runtime"></a>
-
 ### 本地 MCP 运行时
 
 在 Linux/Windows 宿主，或运行 VM 的 Linux 容器中安装 [uv](https://docs.astral.sh/uv/)。兼容清单注册 `.mcp.json`，宿主启动带固定依赖的 Python stdio server。它必须与 QEMU 在同一进程和网络命名空间，因为探测只访问 `127.0.0.1`，忽略 HTTP 代理设置。打开面板不启停 VM、不准备磁盘、不安装工具、不修改状态文件或容器。没有 settings extension。
@@ -525,8 +473,6 @@ python scripts/status.py
 ```
 
 面板使用官方 MCP Apps JavaScript SDK，以及 `openai/ui` 全局侧栏和对话入口。HTML 内含完整打包脚本，无外部 UI 依赖，也不从浏览器直接调用 Docker。原生渲染依赖宿主支持。此包是本地 stdio 集成，不部署或注册远程 ChatGPT 服务。硬件加速取决于宿主，模拟 capability 测试不能证明硬件可用。
-
-<a id="build-and-validate"></a>
 
 ### 构建与验证
 
@@ -547,8 +493,6 @@ uv run --script tests/test-status-panel.py
 
 浏览器测试需要已安装 Playwright Chromium（`uv run --with playwright==1.62.0 playwright install chromium`），或用 `PLAYWRIGHT_CHROMIUM_EXECUTABLE` 指向已有 Chromium。CI 重建 bundle、运行协议／探测／浏览器测试，并验证生成 Codex 包。
 
-<a id="linux-container-workflow"></a>
-
 ## Linux 容器流程
 
 非 root 运行镜像、持久存储和完整命令见 [container/README.md](container/README.md)。普通容器可通过 TCG 运行 QEMU。兼容 Linux 宿主上添加 `--device=/dev/kvm` 和设备组即可启用 KVM；两种模式都不需要 `--privileged`、宿主 Docker socket 或 host-network bridge。
@@ -563,13 +507,9 @@ Docker 构建选项可在上下文目录之前或之后。显式 `-f`、`--file`
 
 所有 `build-docker-proxy.sh` 调用共享用户级锁 `~/.cache/me/locks/build-docker-proxy.lock`，与虚拟机、项目、插件检出和输出目录无关。上传、安装编译器、编译、下载或替换可执行文件前先等待锁。`QEMU_DOCKER_BUILD_LOCK_TIMEOUT` 设置等待秒数，默认 900。正常退出及已处理信号释放自有锁。强制终止后，陈旧锁会报错；确认无编译或传输残留后才能移除报告的锁目录，不删除其他运行中构建的锁。
 
-<a id="plugin-packaging"></a>
-
 ## 插件打包
 
 `plugin.json` 是可移植元数据的权威来源。客户端清单与完整 skill 资源会生成到 `me.claude` 和 `me.codex`，请从这两个仓库安装。源 skill 使用可移植的 frontmatter。Claude 路由按 skill 目录保存在 `extensions.com.anthropic.claude.skillFrontmatter` 中，仅注入生成的 Claude skill。Codex 的 skill 文件保持源文件原样复制。
-
-<a id="network-recovery"></a>
 
 ## 网络恢复
 
@@ -579,13 +519,9 @@ Setup、启停命令使用更新后的插件或匹配源码检出。发行 workf
 
 gvproxy 退出后，停止 VM 再启动。上游 v0.9.0 每进程只接受一个 QEMU 连接，因此恢复会重启两个进程、重新注册全部转发，并等待 SSH 与 Docker 应用响应，不自动重连仍在运行的 QEMU。端口冲突使启动失败，并移除所属进程。不要重启其他会话使用的 VM。API 可暴露端口，必须保持回环监听。
 
-<a id="improvement-feedback"></a>
-
 ## 改进反馈
 
 插件问题向 [storytellerF/me issues](https://github.com/storytellerF/me/issues) 反馈。报告前，skill 要求检索已打开和已关闭的 issue，使用脱敏或合成示例，并遵循用户已有的发布授权。优先复用已有报告；无法访问时，保留尚未提交的草稿。
-
-<a id="python-lifecycle-and-state-controller"></a>
 
 ## Python 生命周期与状态控制器
 
@@ -597,9 +533,7 @@ gvproxy 退出后，停止 VM 再启动。上游 v0.9.0 每进程只接受一个
 
 QEMU 创建前的失败（如日志不可写或明确进程创建失败）自动清理本次 helper 和预留。初始 guard 元数据失败也回滚该操作创建的 guard，允许重试；已有中断 guard 仍需检查。Shell 客户端请求租约或 guard 期间仍负责清理。取消等待创建者完成，再只释放该请求资源；令牌交付失败可重试，无需手动删锁。取消 helper 创建时，等待所属进程退出再移除预留；无法确认退出则保留恢复证据。就绪前取消在归属可核实时采用同样清理。就绪已提交后，VM 保持后台运行。取消 stop 保留剩余归属，便于后续 stop 完成。
 
-原生 helper controller 无法确认退出时，操作租约也保留；恢复前检查所有剩余插件进程。新 start 绝不接管已有 helper 归属，先明确停止该 VM。阶段转换和恢复证据见[开发者生命周期规则](https://github.com/storytellerF/me/blob/main/DEVELOPMENT.md#vm-lifecycle-and-state-controllers)。
-
-<a id="profile-configuration-isolation"></a>
+原生 helper controller 无法确认退出时，操作租约也保留；恢复前检查所有剩余插件进程。新 start 绝不接管已有 helper 归属，先明确停止该 VM。阶段转换和恢复证据见[开发者生命周期规则](https://github.com/storytellerF/me/blob/main/DEVELOPMENT.md#虚拟机生命周期与状态控制器)。
 
 ## 配置文件隔离
 
@@ -608,8 +542,6 @@ Profile 设置只来自选定的字面量 `KEY=value` 文件。缺少必需设�
 VM 资源、端口、加速、Alpine 镜像和镜像源、镜像预加载、生命周期超时、`FORCE` 和 `VERIFY_EXISTING` 放在 profile。`QEMU_ALPINE_BASE_DIR`、`QEMU_STATUS_PROFILE`、`QEMU_STATE_PYTHON`、`QEMU_BASH_BINARY`、`GVPROXY_BINARY` 和代理 helper 路径等宿主控制仍通过环境设置，不是 profile key。
 
 普通启动由 Python 直接创建 QEMU，在就绪前记录原生进程身份。启动完成后，将归属转交持久 VM 状态，使 VM 持续运行。发布中断或未经核实会保留预留和网络供检查；旧 shell 启动记录仍可恢复。不要仅因缺少 PID 文件就移除保留状态。
-
-<a id="guest-provisioning-dependencies"></a>
 
 ## 客户机安装依赖
 
@@ -624,8 +556,6 @@ bash scripts/run-test-env.sh --profile /path/to/isolated.profile -- \
 
 使用该隔离 profile 的发布池边界。此显式启用检查拉取 BusyBox、Alpine 和 Ryuk 镜像，测试 HTTP 转发和 CPU／内存 cgroup 限制，在受限容器内触发 OOM，并检查 workload 清理。保持 Ryuk 启用，验证后只停止隔离 VM。
 
-<a id="experimental-windows-gpu-patch-bundle"></a>
-
 ## 实验性 Windows GPU 补丁包
 
 插件包含仅源码形式的 viogpu/VirGL 补丁包，供 Windows guest 使用原生宿主 OpenGL。带补丁 QEMU 可从创建起隐藏 SDL 显示（`-display sdl,gl=on,hidden=on`），同时保留 guest 可交互桌面用于自动化。隐藏模式与全屏不兼容。保持 `graphical: true`；这是隐藏的图形后端，不是 `-display none`。
@@ -634,4 +564,4 @@ bash scripts/run-test-env.sh --profile /path/to/isolated.profile -- \
 
 使用单独私有 runtime/profile，并保留回滚副本。驱动签名和 guest 配置仍是操作者前提，本补丁包不修改宿主 Secure Boot。测试编译仍在宿主进行。
 
-参阅[构建、资格验证与回滚说明](DEVELOPMENT.md#experimental-viogpu-source-bundle)。
+参阅[构建、资格验证与回滚说明](DEVELOPMENT.md#实验性-viogpu-源码包)。

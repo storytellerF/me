@@ -1,10 +1,6 @@
-<a id="independent-alpine-docker-backend"></a>
-
 # 独立 Alpine Docker 后端
 
-只有测试需要此后端时才选择本流程。复用合适的已有 Docker 端点；普通 Linux 宿主机直接使用 Docker。工作客户机不要求 Alpine，仅 Docker 测试也不要求工作客户机。配置前阅读插件[前提要求](../../../README.md#prerequisites)。
-
-<a id="provision-and-run"></a>
+只有测试需要此后端时才选择本流程。复用合适的已有 Docker 端点；普通 Linux 宿主机直接使用 Docker。工作客户机不要求 Alpine，仅 Docker 测试也不要求工作客户机。配置前阅读插件[前提要求](../../../README.md#前提条件)。
 
 ## 安装与运行
 
@@ -25,8 +21,6 @@ scripts/create-vm.sh /absolute/path/to/backend.profile
 
 覆盖目录时，构建器和测试包装器一致设置 `QEMU_DOCKER_PROXY_DIR`。包装器将代理加入 PATH 并提供 SSH 设置；只有已有 Gradle daemon 保留过时可执行文件查找结果时才重启它。代理使用 Go SSH 传输，避免嵌套系统 SSH 的 stdin 和输出停滞。
 
-<a id="backend-configuration"></a>
-
 ## 后端配置
 
 修改配置、加速、端口范围、指标、镜像源、预加载镜像或恢复设置前，阅读[配置与恢复](configuration-and-recovery.md)。后端 `.profile` 不同于工作客户机 JSON 配置。同一时间最多运行一个 Alpine 后端，多个工作客户机仍独立。
@@ -42,8 +36,6 @@ scripts/create-vm.sh /absolute/path/to/backend.profile
 - Docker 在 daemon 初始化时缓存发布端口池。新客户机通过受监督启动包装器预设端口池，再恢复不重叠的宽范围内核出站端口。不要只改 QEMU 转发就应用新默认值，也不要重启其他会话的持久客户机；先查看 README 的发布端口池兼容性。
 - 不悄悄删除未完成磁盘，不使用 `docker image prune -a`。
 - TCP 2375 是等同 root 权限且未经认证的 API，不暴露到回环地址以外。
-
-<a id="docker-files-and-build-contexts"></a>
 
 ## Docker 文件与构建上下文
 
@@ -61,13 +53,9 @@ Docker 构建选项可位于上下文目录前或后。显式 `-f`、`--file` �
 
 它取消 TLS 变量和 `TESTCONTAINERS_RYUK_DISABLED`，保留测试命令退出码。`auto` 指标模式下，Windows 收集并报告资源均值和峰值；Linux 不运行 PowerShell 收集器，也不更新指标报告。
 
-<a id="linux-container-host"></a>
-
 ## Linux 容器宿主环境
 
 普通非 root 容器流程见插件根目录 `container/README.md`。映射 `/dev/kvm` 并添加匹配附加组即可启用 KVM，不要求 `--privileged`。本 Alpine 后端在 KVM 不可用时可按自动策略选择 TCG；显式加速器必须失败，不回退。测试进程、QEMU 和 MCP 状态服务留在同一外层容器的进程、网络命名空间。Docker、Testcontainers 转发只监听回环。客户机为 x86-64，KVM 要求兼容的 Linux 宿主 CPU。
-
-<a id="lifecycle-and-recovery"></a>
 
 ## 生命周期与恢复
 
@@ -76,8 +64,6 @@ Docker 构建选项可位于上下文目录前或后。显式 `-f`、`--file` �
 安装仍由 `create-vm.sh` 的 Shell 编排，使用同一 Python 状态控制器管理操作租约、全局预留、进程注册及状态清理。客户机模板和简单命令转发仍使用 Shell。进程探测未知、guard 中断或清理失败时，保留归属供检查。遵循共同取消规则，手动恢复前检查遗留操作租约。
 
 网络恢复先确认虚拟机不属于其他用户，再协调 `stop-vm.sh` 和 `start-vm.sh`。上游只接受一个 QEMU 连接，同时重启二者以恢复规则并建立新传输。不用连接重试或 SSH 网络桥接掩盖应用失败。
-
-<a id="live-backend-acceptance"></a>
 
 ## 真实后端验收
 

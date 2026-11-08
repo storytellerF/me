@@ -1,16 +1,10 @@
-<a id="test-report-sharing-plugin"></a>
-
 # 测试报告分享插件
 
 将已有测试报告收集成可浏览站点，用于本地预览或用户要求的公开分享。此 skill 用于报告收集、预览和分享；仅运行测试或诊断失败，不代表要求生成报告站点或再次运行测试。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 收集器读取已有报告，不让项目测试依赖本 AI 插件的收集、查看或隧道脚本。普通测试报告和覆盖率插件仍为有效依赖；项目自有报告或持久集成属于另行要求的变更。
-
-<a id="workflow"></a>
 
 ## 工作流程
 
@@ -42,8 +36,6 @@ python /path/to/plugin/scripts/start-ngrok.py --project-dir /path/to/project --l
 
 显式相对 `--output-dir` 和 `REPORT_OUTPUT_DIR` 以原调用目录解析。扫描和复制的报告目录树排除已注册子模块，包括显式指定的搜索根目录。从 Git 仓库收集时需要 Git 识别注册子模块；非 Git 项目不需要 Git。对于旧版未排除子模块时收集的报告，使用全新输出目录。
 
-<a id="configuration"></a>
-
 ## 配置
 
 
@@ -56,21 +48,15 @@ python /path/to/plugin/scripts/start-ngrok.py --project-dir /path/to/project --l
 | `PYTHON_COMMAND` | 所有命令使用的 Python 3.10+ 可执行文件 | 先 `python3`，后 `python` |
 
 
-<a id="requirements"></a>
-
 ## 环境要求
 
 - 兼容 `.sh` 启动器需要 **Bash**；原生 Python 入口也可不依赖 Bash 运行。
 - **ngrok**：公开分享所需；否则使用本地服务 URL。
 - **Python 3.10+**：全部报告和预览命令所需，无需第三方 Python 包。
 
-<a id="license"></a>
-
 ## 许可证
 
 本插件属于 me 插件集合。
-
-<a id="plugin-packaging"></a>
 
 ## 插件打包
 
@@ -81,8 +67,6 @@ python /path/to/plugin/scripts/start-ngrok.py --project-dir /path/to/project --l
 每次收集发布包含站点的完整替换快照。重复收集不会让当前视图重复报告；源报告删除后，下一快照不再包含它。收集失败保留旧版本。启动器 URL 打开最新快照，已打开页面保留原资源。旧代次继续保留，因此只有服务和读取者结束后，才移除专用报告缓存。
 
 链接资源在发布时复制并物化到每个快照，后续源变化不改变已打开报告。目录循环会使收集失败，复制失败保留上次发布；不保留指向源的实时链接。
-
-<a id="improvement-feedback"></a>
 
 ## 改进反馈
 

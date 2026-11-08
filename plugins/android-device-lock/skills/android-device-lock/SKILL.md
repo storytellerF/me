@@ -3,13 +3,9 @@ name: android-device-lock
 description: 在共享 Android 真机或模拟器上运行测试、准备测试会话，或检查设备占用与租约归属时使用。适用于不同测试框架；不包括仅在宿主机运行的 JVM 测试，以及只读模拟器清单和屏幕预览。
 ---
 
-<a id="android-device-lock"></a>
-
 # Android 设备锁
 
 任何需要独占访问的 Android 设备测试都使用本插件，包括 UI、instrumentation、端到端和 adb 驱动测试。锁流程不受测试框架影响。
-
-<a id="project-independent-execution"></a>
 
 ## 独立于项目执行
 
@@ -21,8 +17,6 @@ description: 在共享 Android 真机或模拟器上运行测试、准备测试�
 - 使用同一 adb 设备的所有项目，必须使用相同的设备端锁路径。使用随包默认路径。已有非默认路径必须由所有参与者和状态收集器共同使用，不能每个项目各选一条。
 - 找不到已安装辅助工具时，报告插件资源不可用，不向项目复制或自行替代实现。
 
-<a id="required-behavior"></a>
-
 ## 必需行为
 
 - 启动设备测试会话、安装或运行应用，以及修改设备状态之前，先获取设备锁。
@@ -32,8 +26,6 @@ description: 在共享 Android 真机或模拟器上运行测试、准备测试�
 - 已有有效锁时，轮询等待其释放或过期。
 - 锁过期时，移除旧锁并获取新锁。
 - 始终在 trap 或 finally 中释放锁，且仅当归属令牌匹配时释放。
-
-<a id="quick-start"></a>
 
 ## 快速开始
 
@@ -51,8 +43,6 @@ description: 在共享 Android 真机或模拟器上运行测试、准备测试�
 
 手动获取、释放和续租请阅读 [`references/manual-lock-lifecycle.md`](references/manual-lock-lifecycle.md)。
 
-<a id="execution-guidance"></a>
-
 ## 执行指引
 
 工具处理 Git Bash 调用 Windows ADB 时的路径转换：Android 路径保持不变，本地元数据上传路径在 `cygpath` 可用时进行转换。
@@ -63,8 +53,6 @@ description: 在共享 Android 真机或模拟器上运行测试、准备测试�
 - 默认共享锁路径为 `/data/local/tmp/android-device-test.lock.d`，普通调试设备和模拟器上的 `adb shell` 可写。
 - 单个命令无法覆盖全部设备操作时，从 agent 管理的临时 Shell 会话执行手动生命周期，不修改项目测试运行器。
 
-<a id="failure-handling"></a>
-
 ## 失败处理
 
 - `adb` 看不到设备时，在等待锁之前失败。
@@ -73,19 +61,13 @@ description: 在共享 Android 真机或模拟器上运行测试、准备测试�
 - 释放时令牌不匹配，不删除锁；它属于其他运行任务。
 - `run` 使用固定时长租约，不自动续租。命令必须在租约内结束；更长操作手动续租，无法确认续租时在到期前停止设备工作。自定义路径必须位于 `/data/local/tmp` 下，且不能含父目录跳转。
 
-<a id="native-python-entry"></a>
-
 ## 原生 Python 入口
 
 Windows 或 Unix 可使用相同命令和选项运行 `python /absolute/plugin/scripts/adb-device-lock.py`。`.sh` 入口只选择 Python 3.10+ 解释器并转发参数。控制器保留设备 guard 和令牌协议，负责命令取消、子进程清理和租约释放。
 
-<a id="bundled-resource"></a>
-
 ## 随包资源
 
 - `scripts/adb-device-lock.sh`：确定性的 adb 锁辅助工具，提供 `acquire`、`release`、`renew` 和 `run` 命令。
-
-<a id="read-only-lease-status"></a>
 
 ## 只读租约状态
 
@@ -102,8 +84,6 @@ Windows 或 Unix 可使用相同命令和选项运行 `python /absolute/plugin/s
 Windows 使用 Ctrl+C 或原生 Ctrl+Break 平滑取消。Git Bash `kill -TERM` 强制终止原生 Python，无法执行清理；恢复前检查保留令牌和设备 guard。原生等待在命令运行期间分派信号，再停止自有命令树，最后释放。
 
 `run` 在释放租约前停止剩余后代，即使命令根进程已退出。Windows 使用 Job Object；Unix 命令必须将设备 worker 留在自有进程组，不得 daemonize 或创建脱离会话。无法确认进程树清理时，保留租约和归属令牌供恢复。Windows shebang 入口通过 Git Bash 使用声明的解释器和原参数，该解释器必须在 Git Bash 环境可用。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

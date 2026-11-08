@@ -3,19 +3,13 @@ name: client-ui-best-practices
 description: 在移动端、Web 和桌面框架中实现、调试、审查或重构客户端 UI 状态、异步行为、生命周期、渲染及 UI 线程性能时使用。
 ---
 
-<a id="client-ui-best-practices"></a>
-
 # 客户端 UI 最佳实践
 
 在 UI 线程完成渲染，将功能行为放入独立于 UI 框架的 `Host`。UI 观察不可变状态、渲染状态并调用 Host 操作。
 
-<a id="project-independence"></a>
-
 ## 使用项目的独立性
 
 在项目自身代码和现有架构中实现 Host 与状态边界。不要在项目构建、运行时或文档中加入对本 AI 插件、助手专用包或参数的依赖，也不要要求调用其 agent。实现所需的 UI 框架、编译器或 Gradle 插件和测试库仍属于正常依赖。
-
-<a id="ui-boundary"></a>
 
 ## UI 边界
 
@@ -23,8 +17,6 @@ description: 在移动端、Web 和桌面框架中实现、调试、审查或重
 - 网络、磁盘、数据库、解析、加密、图像处理、排序、分组等非轻量工作移出 UI 线程。
 - 只在渲染状态或调用明确要求 UI 线程的 API 时切回 UI 线程。后台任务不得直接更新 UI 对象。
 - 通过感知生命周期的订阅观察状态和副作用，避免视图与收集任务的生命周期失配。
-
-<a id="host-contract"></a>
 
 ## Host 约定
 
@@ -58,8 +50,6 @@ Host(dependencies, dispatchers):
         scope.cancel()
 ```
 
-<a id="state-effects-and-work"></a>
-
 ## 状态、副作用与工作
 
 - 将需要持续渲染的数据发布为不可变状态快照。不要向 UI 直接暴露可变集合或领域对象。
@@ -67,8 +57,6 @@ Host(dependencies, dispatchers):
 - 非轻量的可观察数据转换，应在值到达 UI 订阅者之前完成，并调度到适当的工作执行器。
 - 支持时，将数据库读取作为可观察数据源。阻塞写入通过 Host 命令边界或现有应用写入器执行。
 - 保持事件处理函数轻量：将框架事件转换成 Host 操作，不从渲染代码启动业务任务。
-
-<a id="platform-references"></a>
 
 ## 平台参考
 
@@ -79,16 +67,12 @@ Host(dependencies, dispatchers):
 - React：[`references/react.md`](references/react.md)
 - 其他桌面或事件循环框架：[`references/desktop.md`](references/desktop.md)
 
-<a id="verification"></a>
-
 ## 验证
 
 - 不启动 UI 运行时，测试 Host 状态转换、副作用、错误、取消、顺序和调度器选择。
 - UI 测试覆盖渲染、事件接线、生命周期集成和无障碍功能。
 - 双向验证：昂贵工作不能占用 UI 线程，后台工作不能修改 UI 对象。
 - 调查 UI 停顿时，使用平台诊断或性能分析证据。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

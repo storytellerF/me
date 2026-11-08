@@ -1,5 +1,3 @@
-<a id="ios-and-swift-host"></a>
-
 # iOS 与 Swift Host
 
 Host 不依赖 `UIView`、`UIViewController` 和 SwiftUI `View` 类型。使用注入的串行执行器或 actor 协调 Host，通过项目观察机制发布不可变状态和一次性副作用。

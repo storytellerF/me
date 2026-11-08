@@ -1,10 +1,6 @@
-<a id="host-driven-test-execution"></a>
-
 # 宿主机驱动测试
 
-阅读[统一入口](../../../README.md#unified-test-environment-entry-point)，以及下方符合项目运行时和传输需求的章节。复用项目已有命令，遵循 SKILL.md 的构建位置与项目独立性规则。
-
-<a id="runtime-requirements-and-initialization"></a>
+阅读[统一入口](../../../README.md#统一测试环境入口)，以及下方符合项目运行时和传输需求的章节。复用项目已有命令，遵循 SKILL.md 的构建位置与项目独立性规则。
 
 ## 运行需求与初始化
 
@@ -14,8 +10,6 @@
 
 大型归档不放进 cloud-init YAML，改为从只读介质解包 seed 载荷。轮询 cloud-init 状态，不创建长期等待进程。通过受监督、归 QEMU 管理的监听器验证 SSH 主机密钥固定值，保留每台虚拟机的指纹供后续连接。隔离 Linux 测试显示与面板中的控制台帧缓冲不同。
 
-<a id="execute-and-collect-results"></a>
-
 ## 执行与收集结果
 
 已配置的宿主机测试使用 `bash scripts/run-test-env.sh --config <project-environment.json> -- <host test command>`，连接 Docker 和／或客户机 Appium 传输。连接通过操作者管理的 `TEST_ENV_DOCKER_PROFILE`、`TEST_ENV_GUEST_PROFILE` 提供；项目 JSON 声明可移植工作区、属性、文件或目录、清理与启动角色，包括可选预构建 `artifacts`。旧 `run-testcontainers.sh` 为兼容性转发到此入口。
@@ -23,8 +17,6 @@
 代理适配器支持带引号的 JVM 参数文件，覆盖 Windows 宿主机到 Windows 客户机，以及 Windows、Linux 宿主机到 Linux 客户机。宿主机编译后暂存 classpath、JDK 和 agent 产物，镜像私有输入和输出，转发声明的回环服务端口，保留应用重启之间的客户机状态，并将输出收回原宿主机路径。绝不将宿主机 Windows JDK 发到 Linux。不支持的适配器应失败，不猜测。透明 `java-argfile` 中继不支持 macOS；该目标使用操作者管理的预备 Appium 启动适配器。
 
 已准备或自定义 Linux 环境可使用操作者管理的 `TEST_ENV_LINUX_RUNTIME` 覆盖，包含专用 POSIX 镜像根目录、已有客户机 Java 可执行文件、预构建宿主机原生 classpath 补充项，以及可选 Appium 端口。在项目外准备隔离的图形 Appium 会话、D-Bus、AT-SPI 和已解锁测试密钥环。映射声明角色和 classpath，将启动 capabilities 发给客户机 Java 运行时。原生诊断通过应用机器上的 Appium 执行，不让客户端在本地附加客户机 PID。
-
-<a id="failure-and-cleanup"></a>
 
 ## 失败与清理
 

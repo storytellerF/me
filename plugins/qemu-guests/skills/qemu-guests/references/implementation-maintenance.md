@@ -1,10 +1,6 @@
-<a id="plugin-implementation-and-validation"></a>
-
 # 插件实现与验证
 
 仅在修改本插件的运行时、生命周期、传输、安装或状态 UI 时阅读。普通应用测试使用选定的操作参考，不需要重建 QEMU 或运行插件回归套件。完整测试命令和证据放在 [DEVELOPMENT.md](../../../DEVELOPMENT.md)。
-
-<a id="backend-ownership-and-publication"></a>
 
 ## 后端归属与发布
 
@@ -16,13 +12,9 @@
 - CLI 向 Shell 交接归属时，在获取之前生成令牌并安装匹配清理。取消回滚前等待原生创建者结束，保留自定义清理 trap，只释放相同归属和令牌。使用共享 Shell 外观层；内部 begin、guard-acquire CLI 要求调用方已知令牌。交付失败不授予删除已有未知租约或 guard 的权限。
 - 通过共享 `render_template` 从 `templates/*.tpl` 渲染安装配置；脚本只负责运行值与编排。
 
-<a id="managed-windows-runtime"></a>
-
 ## Windows 受管运行时
 
 每次构建从缓存选择、编译、打包输入、清单到验证，都绑定同一不可变 BuildSnapshot。源码模板或补丁变化供后续调用使用；不得重新计算或改标正在运行的构建指纹。清除中断构建锁前检查遗留构建进程。使用 `tests/validate-whpx-reboots.py` 验证客户机启动时间变化、客户机可见的四个处理器和保持不变的 QEMU 原生身份，再验证认证后的 Appium 就绪及并发工作客户机验收。每次重启还必须在同一周期截止时间内恢复交互 Appium 服务；SSH 先返回不构成验收。监督进程冷启动重拉不算热重启成功。旧显式系统运行时配置可保留有限 `install_reboots` 预算，但不能将其误认为默认受管路径。未经测试，不将结果推广到 Windows 10、其他 CPU 模型或 UEFI 安装。
-
-<a id="initialization-and-test-orchestration"></a>
 
 ## 初始化与测试编排
 
@@ -33,8 +25,6 @@ GuestTransport 管理其 SSH 子进程：报告聚合清理失败之前，尝试
 配置式测试执行必须在 CLI、TestEnvironmentOwner 和传输之间共享一个 CancellationRequest。遵循 DEVELOPMENT.md 的三条不变量：只有主线程提交取消、阶段和租约状态；worker 发布可靠事件和不可被后续成功清除的清理失败；释放和终态发布要求关闭新工作准入、确认资源 worker 完成并收集最终事件。信号只入队请求。worker 在检查点读取已提交快照，不构造或替换共享取消对象。主线程清理屏蔽保持上下文本地。HTTP 转换和 worker 完成前报告停止失败，即使后续重试成功也保留失败。拒绝 worker 修改 owner 或 CLI 状态。保留已有断言和规定的取消优先级，包括已接受中断的身份。不得重新引入栈帧检查、异步信号异常、交接重试或嵌套处理器替换。修改测试编排时保留已有生命周期约定；有意修改共享进程运行时或虚拟机管理命令时，另行运行其受影响回归检查。
 
 worker 报告和全部清理均已纳入后，发布一份不可变 CliResult/CleanupReport。输出固定失败类别、数量及准确的已获取租约恢复提示，不输出原始清理异常、命令、路径或凭据。worker 未确认结束或保留状态发布失败时，必须保留归属证据。验证 tests/test-worker-protocol.py，以及已有取消、CLI、owner、传输和中继套件，保持 QEMU_TEST_ACCEL 未设置。使用 mock 和本地夹具；不为这些回归启动、停止或修复已有虚拟机。
-
-<a id="offline-checks-and-live-acceptance"></a>
 
 ## 离线检查与真实验收
 

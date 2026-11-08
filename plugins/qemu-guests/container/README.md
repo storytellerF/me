@@ -1,5 +1,3 @@
-<a id="qemu-docker-inside-an-ordinary-linux-container"></a>
-
 # 普通 Linux 容器中的 QEMU Docker
 
 镜像还包含 pycdlib，用于创建并发工作客户机的无人值守介质，以及 Tesseract，用于 macOS Recovery 交接。使用插件 README 的工作客户机 JSON 配置和监督器。各工作客户机 `state_dir` 放在持久存储上，在同一容器内分配不同宿主 SSH 端口。已有 Alpine 卷和存储覆盖值不变，让后端磁盘在插件重命名后继续保留。

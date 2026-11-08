@@ -3,11 +3,7 @@ name: qemu-guests
 description: 运行桌面应用测试、在不同于当前宿主机的操作系统或运行环境中测试，或准备 Docker 测试环境（含 Testcontainers）时使用。在内部协调环境选择与测试执行，用户不必点名 QEMU 或 Appium。也用于明确管理、查看已有 QEMU 测试环境的状态或屏幕。不包括普通宿主机本地单元测试，以及与测试或这些受管环境无关的 Docker 工作。
 ---
 
-<a id="qemu-guests"></a>
-
 # QEMU 客户机
-
-<a id="route-the-test-request"></a>
 
 ## 按测试请求选择流程
 
@@ -20,15 +16,11 @@ description: 运行桌面应用测试、在不同于当前宿主机的操作系�
 
 skill 负责选择安装、运行时准备、连接、执行和清理流程；用户不必说出这些机制才能触发。遵循明确选定的环境。报告成功前检查实际请求的测试结果；虚拟机、桌面、Appium 服务或 Docker daemon 就绪只代表环境就绪。明确要求虚拟机生命周期、状态或屏幕操作时，只执行所需操作，不额外测试或创建无关资源。
 
-<a id="project-independence-and-paths"></a>
-
 ## 使用项目的独立性与路径
 
 本 AI 插件启动器路径、虚拟机和后端配置、凭据及生命周期流程留在使用插件的项目之外。项目声明可移植产物、服务角色及标准 Docker、Appium 要求；不为运行测试就添加 QEMU 或 AI 插件专用运行时分支或辅助工具调用文档。原生诊断通过应用侧服务返回，不让客户端检测虚拟机提供方。必需 Appium 驱动或扩展、Gradle 插件和其他真实项目依赖仍需声明和记录。明确要求的提供方集成只覆盖指定范围。
 
 从本 skill 位置（`<plugin-root>/skills/qemu-guests/SKILL.md`）定位已安装插件根目录。保持项目工作目录不变，通过绝对路径调用工具。参考中的脚本和配置路径相对于插件根目录；私有配置复制到检出目录外。这些边界不依赖其他已安装 skill。
-
-<a id="common-execution-rules"></a>
 
 ## 共同执行规则
 
@@ -40,22 +32,18 @@ skill 负责选择安装、运行时准备、连接、执行和清理流程；�
 - 测试前确认桌面在配置 DPI 下容纳套件窗口；运行中不改变几何尺寸或与人工控制台操作竞争。SSH 或 Appium 就绪不证明桌面可用、已解锁或应用测试通过。
 - Windows Python 控制器使用 Ctrl+C 或原生 Ctrl+Break 平滑取消。Git Bash `kill -TERM` 可能绕过清理；强制终止后检查保留归属。备用 MSYS2 工具目录追加到 PATH，保留现有工具优先级。
 
-<a id="read-only-the-relevant-workflow"></a>
-
 ## 只阅读相关流程
 
 | 任务 | 所需指引 |
 | --- | --- |
 | 准备或安装 Windows、Ubuntu 工作客户机，配置 Appium 或选择 GPU 运行时 | [工作客户机准备](references/work-guests.md) |
-| 安装 Intel macOS，或准备、恢复其 Appium 桌面或 GPU 运行时 | [Intel macOS 准备](references/macos.md)，以及共同的[工作客户机准备](references/work-guests.md#provision-and-connect) |
+| 安装 Intel macOS，或准备、恢复其 Appium 桌面或 GPU 运行时 | [Intel macOS 准备](references/macos.md)，以及共同的[工作客户机准备](references/work-guests.md#安装与连接) |
 | 初始化可移植项目运行需求、执行宿主机驱动测试或收集结果 | [宿主机驱动测试](references/test-execution.md) |
 | 准备或使用独立 Alpine Docker 后端，或构建其 CLI 代理 | [Alpine Docker 后端](references/docker-backend.md) |
 | 修改 Alpine 配置、端口、指标或恢复保留后端状态 | [配置与恢复](references/configuration-and-recovery.md) |
 | 修改插件生命周期、运行时、传输代码，或进行插件回归验证 | [实现与验证](references/implementation-maintenance.md) |
 
 操作前阅读所选指引；普通测试请求不加载无关平台流程或执行维护检查。支持的介质、配置和用户命令见[插件 README](../../README.md)中的相关章节。[DEVELOPMENT.md](../../DEVELOPMENT.md) 用于查看实现证据和已验证范围，不应将历史实验视为当前兼容性保证。
-
-<a id="read-only-status-and-screens"></a>
 
 ## 只读状态与屏幕
 
@@ -69,13 +57,9 @@ skill 负责选择安装、运行时准备、连接、执行和清理流程；�
 
 单个工作客户机使用 `scripts/guest-vm.py status <guest.json>`。面板只读，手动交互测试需要独立控制台。状态或屏幕请求不为补齐缺失数据就安装工具、生成密钥或启动测试。
 
-<a id="finish-the-requested-work"></a>
-
 ## 完成请求
 
 报告实际环境和测试结果、相关产物位置、未执行或不支持的检查，以及需要检查的保留资源。区分环境就绪与应用验收。只停止用户要求或自己管理的临时资源，保留复用服务和归属不确定的资源。下载、安装和启动须在请求或既有授权范围内；已授权步骤不重复询问。
-
-<a id="upstream-improvement-feedback"></a>
 
 ## 上游改进反馈
 

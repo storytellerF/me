@@ -2,8 +2,6 @@
 
 一套可移植的 [Agent Plugins](https://agent-plugins.org) 插件集合，提供 Android 工具、客户端 UI 与编码指引、支持 ngrok 隧道的测试报告分享，以及共享 Alpine Docker 后端的并发 QEMU 工作客户机。
 
-<a id="what-is-included"></a>
-
 ## 包含的功能
 
 - Android 模拟器准备与配置，以及独立于测试框架的 Android 设备测试锁。
@@ -16,21 +14,15 @@
 
 变更合入 `main` 或手动触发后，GitHub Actions 在 `me.claude` 和 `me.codex` 创建发行同步 PR。请从这两个仓库安装。
 
-原 `kotlin-coding-practices` 插件已并入 [`general-coding-practices`](plugins/general-coding-practices/README.md#code-design-guidance)。安装或更新该插件，并将显式 `kotlin-project-rules` 引用改为 `code-design-rules`。
-
-<a id="consuming-project-independence"></a>
+原 `kotlin-coding-practices` 插件已并入 [`general-coding-practices`](plugins/general-coding-practices/README.md#代码设计指引)。安装或更新该插件，并将显式 `kotlin-project-rules` 引用改为 `code-design-rules`。
 
 ## 使用项目的独立性
 
 skill 通过项目自身代码、常规工具接口和外部编排工作。使用 AI 插件不要求向项目添加其安装路径、私有配置或辅助命令。Gradle 插件、Appium 驱动或扩展等正常依赖继续受支持并记录；用户明确要求的 AI 插件集成保持在指定范围。
 
-<a id="improvement-feedback"></a>
-
 ## 改进反馈
 
 每个插件的 skill 都包含可落实改进事项的上游反馈流程。报告发往 [storytellerF/me](https://github.com/storytellerF/me/issues)，先检查已打开和已关闭的 issue，使用脱敏或合成示例。发布遵循用户已有授权；没有授权时，agent 准备草稿。仅安装插件不授权公开发布。
-
-<a id="installation"></a>
 
 ## 安装
 
@@ -42,13 +34,9 @@ Codex 用户请参考专用 [`me.codex`](https://github.com/storytellerF/me.code
 
 Claude Code 用户请参考专用 [`me.claude`](https://github.com/storytellerF/me.claude) 仓库的安装与迁移说明。
 
-<a id="development"></a>
-
 ## 开发
 
 构建、验证、CI 和发行同步见 [DEVELOPMENT.md](DEVELOPMENT.md)。
-
-<a id="host-emulator-access-from-a-vm"></a>
 
 ## 从虚拟机访问宿主模拟器
 
@@ -73,6 +61,6 @@ netstat -ano | findstr "192.168.80.1:5555"
 
 未监听时，检查接口地址、端口归属、代理条目和 IP Helper 服务状态。重启该服务会中断其他端口代理，应使用已安排的维护窗口，不采用一概停止、重启的变通处理。
 
-[QEMU 客户机插件](plugins/qemu-guests/README.md#vm--containers-status-panel)为 MCP Apps 宿主提供只读虚拟机、服务健康和容器状态面板。
+[QEMU 客户机插件](plugins/qemu-guests/README.md#vm-与容器状态面板)为 MCP Apps 宿主提供只读虚拟机、服务健康和容器状态面板。
 
-Android 工具还提供[模拟器状态与按需屏幕预览](plugins/android-emulator-profile/README.md#android-emulators-status-panel)及[设备租约面板](plugins/android-device-lock/README.md#device-leases-status-panel)。
+Android 工具还提供[模拟器状态与按需屏幕预览](plugins/android-emulator-profile/README.md#android-emulators-状态面板)及[设备租约面板](plugins/android-device-lock/README.md#device-leases-状态面板)。
