@@ -87,6 +87,8 @@ Windows Docker CLI 代理通过虚拟机 Go 测试与原生构建，并构建 Li
 
 `guest_config.py` 独立于 Alpine shell profile 验证 JSON profile。`guest_seed.py` 使用 pycdlib 从 `templates/guests/` 渲染私有无人值守介质。`guest-vm.py` 以状态目录租约监督前台原生 QEMU 进程，信号延迟处理覆盖进程创建与记录发布。停止请求携带会话 token；清理失败保留归属证据。工作虚拟机不获取 Alpine 后端预留。
 
+监听检查绑定受监督的 `Popen` 子进程。Linux 正常退出期间可能在前次 `poll()` 与 `/proc/PID/fd` 扫描之间失去描述符访问权限；只有重新 `poll()` 确认该子进程已结束，才将扫描异常解释为未就绪，让主循环按真实退出码处理。活进程的访问错误仍向上传播，不据此猜测退出或放宽归属核验。`tests/test-work-guests.py` 覆盖退出竞态和活进程权限错误。
+
 安装 `scripts/requirements-guests.txt`，再运行 `python tests/test-work-guests.py`。套件检查 Ubuntu／Windows 介质生成、拒绝校验和不符、转发、不完整磁盘保留及重复会话互斥。安装原生 QEMU 后，可并发运行两个暂停的 QEMU 实例，验证独立停止和清理。该进程冒烟中的受控验收不能证明操作系统安装成功。实际 OS 和 Docker／Testcontainers 验收需要相应镜像、后端、目标代理和适配器配置。
 
 默认验收检查虚拟机 SSH 与 Docker 服务器访问，Ubuntu 还检查 cloud-init 完成。自定义适配器自行负责安装和验收。状态 MCP App 还读取工作虚拟机注册表，暴露独立的仅应用可用 PNG 捕获工具。所有生成文件必须放在私有状态目录，绝不写入本仓库。后端改名后保留旧存储路径。显式代理 target 写入 OS／架构子目录，保留用户级构建租约。
